@@ -1,0 +1,25 @@
+{
+  "name": "task-manager",
+  "version": "0.0.1",
+  "description": "task manager web app",
+  "engines": {
+    "node": ">=14"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ushachev/backend-project-lvl4.git"
+  },
+  "keywords": [
+    "node.js",
+    "task manager"
+  ],
+  "author": "Vitaliy Ushachev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ushachev/backend-project-lvl4/issues"
+  },
+  "homepage": "https://github.com/ushachev/backend-project-lvl4#readme"
+}
