@@ -5,8 +5,12 @@
   "engines": {
     "node": ">=14"
   },
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx -n --experimental-vm-modules jest"
+  },
+  "jest": {
+    "testEnvironment": "node"
   },
   "repository": {
     "type": "git",
@@ -25,6 +29,11 @@
   "devDependencies": {
     "eslint": "^7.6.0",
     "eslint-config-airbnb-base": "^14.2.0",
-    "eslint-plugin-import": "^2.22.0"
+    "eslint-plugin-import": "^2.22.0",
+    "jest": "^26.2.2",
+    "nodemon": "^2.0.4"
+  },
+  "dependencies": {
+    "fastify": "^3.2.0"
   }
 }
