@@ -5,12 +5,8 @@
   "engines": {
     "node": ">=14"
   },
-  "type": "module",
   "scripts": {
-    "test": "npx -n --experimental-vm-modules jest"
-  },
-  "jest": {
-    "testEnvironment": "node"
+    "test": "NODE_ENV=test tap --reporter=spec"
   },
   "repository": {
     "type": "git",
@@ -30,10 +26,16 @@
     "eslint": "^7.6.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.22.0",
-    "jest": "^26.2.2",
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.4",
+    "pino-pretty": "^4.1.0",
+    "tap": "^14.10.8"
   },
   "dependencies": {
-    "fastify": "^3.2.0"
+    "dotenv": "^8.2.0",
+    "esm": "^3.2.25",
+    "fastify": "^3.2.0",
+    "fastify-autoload": "^3.0.7",
+    "fastify-plugin": "^2.3.0",
+    "rollbar": "^2.19.2"
   }
 }
