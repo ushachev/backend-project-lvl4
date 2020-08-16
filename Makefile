@@ -2,15 +2,15 @@ install:
 	npm ci
 
 start:
-	npx nodemon --require esm server/bin/server.js
+	npx nodemon server/bin/server.js
 
 lint:
 	npx eslint .
 
 test:
-	npm test -- --no-coverage --reporter=spec
+	npm test -- --no-coverage
 
 test-coverage:
-	npm test -- --coverage --coverage-report=lcovonly
+	npm test
 
 .PHONY: install test

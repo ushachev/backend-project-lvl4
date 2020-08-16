@@ -17,4 +17,10 @@ tap.test('requests route:', async (t) => {
     url: '/wrong-path',
   });
   t.equal(response2.statusCode, 404, '"/wrong-path" returns a status code of 404');
+
+  const response3 = await app.inject({
+    method: 'GET',
+    url: '/throw',
+  });
+  t.equal(response3.statusCode, 500, '"/throw" returns a status code of 500');
 });

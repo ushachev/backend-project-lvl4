@@ -1,0 +1,4 @@
+coverage-report:
+  - text
+  - lcov
+reporter: spec
