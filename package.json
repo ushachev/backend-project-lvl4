@@ -6,7 +6,8 @@
     "node": ">=14"
   },
   "scripts": {
-    "test": "NODE_ENV=test tap --reporter=spec"
+    "test": "NODE_ENV=test tap",
+    "start": "NODE_ENV=production node -r esm server/bin/server.js",
   },
   "repository": {
     "type": "git",

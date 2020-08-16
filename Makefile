@@ -8,9 +8,9 @@ lint:
 	npx eslint .
 
 test:
-	npm test -- --no-coverage
+	npm test -- --no-coverage --reporter=spec
 
 test-coverage:
-	npm test
+	npm test -- --coverage --coverage-report=lcovonly
 
 .PHONY: install test
