@@ -4,7 +4,7 @@ import getApp from '../index.js';
 
 const app = getApp();
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || process.env.DEV_SERVER_PORT;
 const address = '0.0.0.0';
 
 const start = async () => {

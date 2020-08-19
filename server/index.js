@@ -2,18 +2,18 @@
 
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import dotenv from 'dotenv';
 import fastify from 'fastify';
 import autoLoad from 'fastify-autoload';
-
-dotenv.config();
+import pointOfView from 'point-of-view';
+import pug from 'pug';
+import fastifyStatic from 'fastify-static';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const mode = process.env.NODE_ENV || 'development';
-const isProduction = mode === 'production';
 const isDevelopment = mode === 'development';
+const isTest = mode === 'test';
 
 const registerPlugins = (app) => {
   app
@@ -25,16 +25,36 @@ const registerPlugins = (app) => {
     });
 };
 
-export default () => {
-  const logger = (isDevelopment || isProduction) && {
-    prettyPrint: isDevelopment && {
-      translateTime: 'SYS:standard',
+const setUpViews = (app) => {
+  const devHost = `http://${process.env.DEV_SERVER_HOST}:${process.env.DEV_SERVER_PORT}`;
+  const domain = isDevelopment ? devHost : '';
+  app.register(pointOfView, {
+    engine: { pug },
+    includeViewExtension: true,
+    root: join(__dirname, 'views'),
+    defaultContext: {
+      assetPath: (filename) => `${domain}/assets/${filename}`,
     },
+  });
+};
+
+const setUpStaticAssets = (app) => {
+  app.register(fastifyStatic, {
+    root: join(__dirname, '..', 'public'),
+    prefix: '/assets/',
+  });
+};
+
+export default () => {
+  const logger = !isTest && {
+    prettyPrint: isDevelopment,
     base: null,
   };
   const app = fastify({ logger });
 
   registerPlugins(app);
+  setUpViews(app);
+  setUpStaticAssets(app);
 
   return app;
 };

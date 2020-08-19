@@ -2,6 +2,9 @@ install:
 	npm ci
 
 start:
+	heroku local -f Procfile.dev
+
+start-backend:
 	npx nodemon server/bin/server.js
 
 lint:
