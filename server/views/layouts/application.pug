@@ -4,20 +4,35 @@ html
     meta(charset='utf-8')
     meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
     link(href=assetPath('bootstrap.min.css'), rel='stylesheet')
+    script(src='https://kit.fontawesome.com/b2b33dcce3.js', crossorigin='anonymous')
     title Task manager
-  body
-    nav.navbar.navbar-expand-lg.navbar-dark.bg-dark.mb-3
-      a.navbar-brand.text-monospace(href='/')
+  body.d-flex.flex-column.vh-100
+    nav.navbar.navbar-expand-lg.navbar-dark.bg-dark.m-3.mb-5
+      a.navbar-brand.text-monospace(href=route('root'))
         span task.
         span.text-primary manage
         span ()
       button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarNav', aria-controls='navbarNav', aria-expanded='false', aria-label='Toggle navigation')
         span.navbar-toggler-icon
       #navbarNav.collapse.navbar-collapse
-        ul.navbar-nav
-          li.nav-item.active
+        ul.navbar-nav.ml-auto
+          li.nav-item
+            a.nav-link(href=route('newUser'))
+              i.far.fa-user.align-middle
+              span.pl-1 регистрация
+          li.nav-item.ml-lg-3
             a.nav-link(href='#')
-              | Ссылка
-              span.sr-only (current)
+              i.fas.fa-sign-in-alt.align-middle
+              span.pl-1 войти
     main.container
       block content
+    footer.bg-dark.m-3.mt-auto.px-4.py-3
+      .row.justify-content-between
+        .col-auto
+          a.text-secondary.mr-3(href='https://github.com/ushachev/backend-project-lvl4', target='_blank')
+            i.fab.fa-github.fa-2x.align-middle
+            span.align-middle.ml-2 код проекта
+        .col-auto
+          copy.align-middle ushachev, 2020
+    script(src='https://code.jquery.com/jquery-3.5.1.slim.min.js', integrity='sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj', crossorigin='anonymous')
+    script(src=assetPath('bootstrap.bundle.min.js'))

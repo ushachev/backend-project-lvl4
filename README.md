@@ -12,6 +12,7 @@ Educational "Project #4" is being developed as part of "Backend Javascript (node
 [![Test Coverage](https://api.codeclimate.com/v1/badges/41256f482a7bf24724a8/test_coverage)](https://codeclimate.com/github/ushachev/backend-project-lvl4/test_coverage)
 
 Task management web application.
+
 [task-manager-fastify.herokuapp.com](https://task-manager-fastify.herokuapp.com)
 
 ## Setup

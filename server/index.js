@@ -7,6 +7,8 @@ import autoLoad from 'fastify-autoload';
 import pointOfView from 'point-of-view';
 import pug from 'pug';
 import fastifyStatic from 'fastify-static';
+import fastifyReverseRoutes from 'fastify-reverse-routes';
+import getHelpers from './helpers/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -17,6 +19,7 @@ const isTest = mode === 'test';
 
 const registerPlugins = (app) => {
   app
+    .register(fastifyReverseRoutes.plugin)
     .register(autoLoad, {
       dir: join(__dirname, 'plugins'),
     })
@@ -26,14 +29,15 @@ const registerPlugins = (app) => {
 };
 
 const setUpViews = (app) => {
-  const devHost = `http://${process.env.DEV_SERVER_HOST}:${process.env.DEV_SERVER_PORT}`;
-  const domain = isDevelopment ? devHost : '';
+  const helpers = getHelpers(app);
+
   app.register(pointOfView, {
     engine: { pug },
     includeViewExtension: true,
     root: join(__dirname, 'views'),
     defaultContext: {
-      assetPath: (filename) => `${domain}/assets/${filename}`,
+      ...helpers,
+      assetPath: (filename) => `/assets/${filename}`,
     },
   });
 };

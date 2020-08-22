@@ -1,3 +1,3 @@
 export default async (app) => {
-  app.get('/', async (_request, reply) => reply.view('welcome/index'));
+  app.get('/', { name: 'root' }, async (_request, reply) => reply.view('pages/welcome'));
 };

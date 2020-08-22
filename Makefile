@@ -7,6 +7,9 @@ start:
 start-backend:
 	npx nodemon server/bin/server.js
 
+start-frontend:
+	npx webpack-dev-server --config webpack.config.cjs
+
 lint:
 	npx eslint .
 
