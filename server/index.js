@@ -8,6 +8,7 @@ import pointOfView from 'point-of-view';
 import pug from 'pug';
 import fastifyStatic from 'fastify-static';
 import fastifyReverseRoutes from 'fastify-reverse-routes';
+import fastifyFormbody from 'fastify-formbody';
 import getHelpers from './helpers/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -20,6 +21,7 @@ const isTest = mode === 'test';
 const registerPlugins = (app) => {
   app
     .register(fastifyReverseRoutes.plugin)
+    .register(fastifyFormbody)
     .register(autoLoad, {
       dir: join(__dirname, 'plugins'),
     })

@@ -6,11 +6,11 @@ tap.test('requests route:', async (t) => {
 
   t.tearDown(() => app.close());
 
-  const response = await app.inject({
+  const response1 = await app.inject({
     method: 'GET',
     url: '/',
   });
-  t.equal(response.statusCode, 200, '"/" returns a status code of 200');
+  t.equal(response1.statusCode, 200, '"/" returns a status code of 200');
 
   const response2 = await app.inject({
     method: 'GET',

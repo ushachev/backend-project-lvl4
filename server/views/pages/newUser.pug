@@ -1,4 +1,17 @@
 extends ../layouts/application.pug
 
 block content
-  p Hi!11
+  .row.position-relative.mb-n5(style='z-index: 1;')
+    .col-auto.mx-auto
+      .bg-dark
+        .card.border-0
+          .card-body
+            h1.card-title регистрация
+  .row
+    .col-5.mx-auto.bg-dark
+      form.p-5.mt-3(action=route('users'), method='post')
+        fieldset.mb-4
+          +input('email', 'email*', values, errors)(type='email')
+          +input('password', 'пароль*', values, errors)(type='password')
+          +input('repeatedPassword', 'повторите пароль*', values, errors)(type='password')
+        +submit('сохранить')(class='btn-block')

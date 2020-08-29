@@ -1,1 +1,1 @@
-// needed for sstartin webpack devserver
+// needed for starting webpack devserver
