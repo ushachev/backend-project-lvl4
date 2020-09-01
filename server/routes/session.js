@@ -2,7 +2,7 @@ export default async (app) => {
   app
     .get('/session/new', { name: 'newSession' }, async (request, reply) => (request.signedIn
       ? reply.redirect(app.reverse('root'))
-      : reply.render('pages/newUser', { activeNavItem: 'newUser' })
+      : reply.render('pages/newSession', { activeNavItem: 'newSession' })
     ))
     .post('/session', { name: 'session' }, async (request, reply) => {
       const { email, password } = request.body;

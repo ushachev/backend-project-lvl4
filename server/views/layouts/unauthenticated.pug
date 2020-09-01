@@ -28,12 +28,27 @@ html
               span.pl-2 войти
 
     main.container.mb-5
-      .fixed-bottom.ml-5.mb-5.pb-5.w-50
-        each messages, type in reply.flash() || []
-          each message in messages
-            .alert.alert-dismissible.fade.show(class=`alert-${type}`, role='alert')= message
-              button.close(type='button', data-dismiss='alert', aria-label='Close')
-                span(aria-hidden='true') &times;
+      // -
+      //   const reply = {
+      //     flash: () => ({
+      //       info: [
+      //         'qqqqqqqqqqqqqqqqq qqqqqqqqqqqqqqqqqqqqqqqq',
+      //         'wwwwwwwwwwwwwwwwwwwwwwwwww wwwwwwwwwwwwwwwwwwwwww wwwwwwwwwwwwwwwwwwwww wwwwwwwwwwwwwwwwwwwwwwwwwwwwww',
+      //       ],
+      //       danger: [
+      //         'zzzzzzzzzzzzzzzzzzzz zzzzzzzzzzzzzzzzzzzzz',
+      //         'aaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaa',
+      //       ],
+      //     }),
+      //   };
+      .fixed-bottom.ml-5.mr-5.mb-5.pb-5
+        .row
+          .col-6.mr-auto
+            each messages, type in reply.flash() || []
+              each message in messages
+                .alert.alert-dismissible.fade.show(class=`alert-${type}`, role='alert')= message
+                  button.close(type='button', data-dismiss='alert', aria-label='Close')
+                    span(aria-hidden='true') &times;
 
       block content
 
