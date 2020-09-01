@@ -9,25 +9,67 @@ html
     link(href=assetPath('bootstrap.min.css'), rel='stylesheet')
     title Task manager
   body.d-flex.flex-column.vh-100
-    nav.navbar.navbar-expand-lg.navbar-dark.bg-dark.m-3.mb-5
-      a.navbar-brand.text-monospace(href=route('root'))
-        span task.
-        span.text-primary manage
-        span ()
-      button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarNav', aria-controls='navbarNav', aria-expanded='false', aria-label='Toggle navigation')
-        span.navbar-toggler-icon
-      #navbarNav.collapse.navbar-collapse
-        ul.navbar-nav.ml-auto
-          li.nav-item(class=(activeNavItem === 'newUser' && 'active'))
-            a.nav-link(href=route('newUser'))
-              +icon('user-plus')
-              span.pl-2 регистрация
-          li.nav-item.ml-lg-3
-            a.nav-link(href='#')
-              +icon('login')
-              span.pl-2 войти
-    main.container.mb-5
-      block content
+    .d-flex.flex-column.flex-lg-row.mx-3.my-3.h-100
+      aside.mb-3.mb-lg-0.bg-dark
+        nav.navbar.navbar-expand-lg.navbar-dark.flex-column.h-100
+          .d-flex.w-100
+            a.navbar-brand.text-monospace.mr-auto(href=route('root'))
+              span task.
+              span.text-primary manage
+              span ()
+            button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarNav', aria-controls='navbarNav', aria-expanded='false', aria-label='Toggle navigation')
+              span.navbar-toggler-icon
+          #navbarNav.collapse.navbar-collapse.align-self-start.w-100.mt-3
+            ul.navbar-nav.flex-column.text-nowrap.align-self-stretch.border-top.border-secondary.pt-3
+              li.nav-item(class=(activeNavItem === '' && 'active'))
+                a.nav-link(href='#')
+                  +icon('users')
+                  span.pl-2 пользователи
+              li.nav-item.mb-2(class=(activeNavItem === '' && 'active'))
+                a.nav-link(href='#')
+                  +icon('list-check')
+                  span.pl-2 задачи
+              li.nav-item.mt-auto.border-top.border-secondary(class=(activeNavItem === '' && 'active'))
+                a.nav-link.text-lg-center(href='#')
+                  +icon('urgent')
+                  span.pl-2 срочно!
+
+      main.container-fluid
+        .fixed-bottom.ml-5.mr-5.mb-5.pb-5
+          .row
+            .col-6.ml-auto
+              each messages, type in reply.flash() || []
+                each message in messages
+                  .alert.alert-dismissible.fade.show(class=`alert-${type}`, role='alert')= message
+                    button.close(type='button', data-dismiss='alert', aria-label='Close')
+                      span(aria-hidden='true') &times;
+
+        .bg-dark.p-3.pb-5.mb-n5
+          .dropdowm.text-right
+            a.dropdown-toggle.text-reset.text-decoration-none(data-toggle='dropdown', href='#', role='button', id='dropdownMenuLink', aria-haspopup='true', aria-expanded='false', data-offset='20, 20')
+              span.mr-2 приветствуем,
+              span= user
+            .dropdown-menu.dropdown-menu-right(aria-labelledby='dropdownMenuLink')
+              a.dropdown-item(href="#")
+                +icon('user')
+                span.pl-2 аккаунт
+              .dropdown-divider
+              a.dropdown-item(class='ml-1', href="#")
+                +icon('logout')
+                span.pl-2 выйти
+
+        .row.justify-content-around.my-3
+          .col-5
+            .bg-dark
+              .card.border-0.p-3
+                h4.display-5 виджет первый
+          .col-5
+            .bg-dark
+              .card.border-0.p-3
+                h4.display-5 виджет второй
+
+        block content
+
     footer.bg-dark.m-3.mt-auto.px-4.py-3
       .row.justify-content-between
         .col-auto
@@ -36,5 +78,6 @@ html
             span.ml-2 код проекта
         .col-auto
           copy ushachev, 2020
+
     script(src='https://code.jquery.com/jquery-3.5.1.slim.min.js', integrity='sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj', crossorigin='anonymous')
     script(src=assetPath('bootstrap.bundle.min.js'))

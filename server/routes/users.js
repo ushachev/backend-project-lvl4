@@ -1,8 +1,9 @@
 export default async (app) => {
   app
     .get('/users', { name: 'users' }, async () => app.read())
-    .get('/users/new', { name: 'newUser' }, async (_request, reply) => (
-      reply.view('pages/newUser', { activeNavItem: 'newUser' })
+    .get('/users/new', { name: 'newUser' }, async (request, reply) => (request.signedIn
+      ? reply.redirect(app.reverse('root'))
+      : reply.render('pages/newUser', { activeNavItem: 'newUser' })
     ))
     .post('/users', async (request, reply) => {
       const { email, password, repeatedPassword } = request.body;
@@ -20,9 +21,10 @@ export default async (app) => {
 
       if (Object.keys(errors).length > 0) {
         return reply.code(422)
-          .view('pages/newUser', { activeNavItem: 'newUser', values: request.body, errors });
+          .render('pages/newUser', { activeNavItem: 'newUser', values: request.body, errors });
       }
-      app.save({ email, password, repeatedPassword });
-      return reply.redirect(app.reverse('root'));
+      app.save({ email, password });
+      request.flash('info', `${email} успешно зарегистрирван`);
+      return reply.redirect(app.reverse('newSession'));
     });
 };

@@ -1,0 +1,50 @@
+include ../mixins/forms.pug
+include ../mixins/components.pug
+
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
+    link(href=assetPath('bootstrap.min.css'), rel='stylesheet')
+    title Task manager
+  body.d-flex.flex-column.vh-100
+    nav.navbar.navbar-expand-lg.navbar-dark.bg-dark.m-3.mb-5
+      a.navbar-brand.text-monospace(href=route('root'))
+        span task.
+        span.text-primary manage
+        span ()
+      button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarNav', aria-controls='navbarNav', aria-expanded='false', aria-label='Toggle navigation')
+        span.navbar-toggler-icon
+      #navbarNav.collapse.navbar-collapse
+        ul.navbar-nav.ml-auto
+          li.nav-item(class=(activeNavItem === 'newUser' && 'active'))
+            a.nav-link(href=route('newUser'))
+              +icon('user-plus')
+              span.pl-2 регистрация
+          li.nav-item.ml-lg-3(class=(activeNavItem === 'newSession' && 'active'))
+            a.nav-link(href=route('newSession'))
+              +icon('login')
+              span.pl-2 войти
+
+    main.container.mb-5
+      .fixed-bottom.ml-5.mb-5.pb-5.w-50
+        each messages, type in reply.flash() || []
+          each message in messages
+            .alert.alert-dismissible.fade.show(class=`alert-${type}`, role='alert')= message
+              button.close(type='button', data-dismiss='alert', aria-label='Close')
+                span(aria-hidden='true') &times;
+
+      block content
+
+    footer.bg-dark.m-3.mt-auto.px-4.py-3
+      .row.justify-content-between
+        .col-auto
+          a.text-secondary.mr-3(href='https://github.com/ushachev/backend-project-lvl4', target='_blank')
+            +icon('brand-github')
+            span.ml-2 код проекта
+        .col-auto
+          copy ushachev, 2020
+
+    script(src='https://code.jquery.com/jquery-3.5.1.slim.min.js', integrity='sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj', crossorigin='anonymous')
+    script(src=assetPath('bootstrap.bundle.min.js'))

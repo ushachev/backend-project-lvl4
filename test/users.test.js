@@ -53,5 +53,6 @@ tap.test('"/users" route actions:', async (t) => {
   };
   const testName5 = `'${request4.method} ${request4.url}' returns posted data`;
   const response4 = await app.inject(request4);
-  t.same(JSON.parse(response4.body), [data1], testName5);
+  const { repeatedPassword: _unneeded, ...expectedData } = data1;
+  t.same(JSON.parse(response4.body), [expectedData], testName5);
 });

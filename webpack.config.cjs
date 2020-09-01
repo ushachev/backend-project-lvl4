@@ -5,6 +5,8 @@ const CopyPlugin = require('copy-webpack-plugin');
 const routesMapping = {
   root: 'welcome',
   newUser: 'newUser',
+  newSession: 'newSession',
+  index: 'index',
 };
 
 const templateParameters = {
@@ -13,6 +15,11 @@ const templateParameters = {
   },
   route(name) {
     return `${routesMapping[name]}.html`;
+  },
+  reply: {
+    flash() {
+      return [];
+    },
   },
 };
 

@@ -2,6 +2,7 @@
 
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import fs from 'fs';
 import fastify from 'fastify';
 import autoLoad from 'fastify-autoload';
 import pointOfView from 'point-of-view';
@@ -9,6 +10,8 @@ import pug from 'pug';
 import fastifyStatic from 'fastify-static';
 import fastifyReverseRoutes from 'fastify-reverse-routes';
 import fastifyFormbody from 'fastify-formbody';
+import fastifySecureSession from 'fastify-secure-session';
+import fastifyFlash from 'fastify-flash';
 import getHelpers from './helpers/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -22,6 +25,13 @@ const registerPlugins = (app) => {
   app
     .register(fastifyReverseRoutes.plugin)
     .register(fastifyFormbody)
+    .register(fastifySecureSession, {
+      key: fs.readFileSync(join(__dirname, '..', 'secret-key')),
+      cookie: {
+        path: '/',
+      },
+    })
+    .register(fastifyFlash)
     .register(autoLoad, {
       dir: join(__dirname, 'plugins'),
     })
@@ -37,10 +47,11 @@ const setUpViews = (app) => {
     engine: { pug },
     includeViewExtension: true,
     root: join(__dirname, 'views'),
-    defaultContext: {
-      ...helpers,
-      assetPath: (filename) => `/assets/${filename}`,
-    },
+    defaultContext: { ...helpers },
+  });
+
+  app.decorateReply('render', function render(viewPath, locals) {
+    this.view(viewPath, { ...locals, reply: this });
   });
 };
 
@@ -48,6 +59,19 @@ const setUpStaticAssets = (app) => {
   app.register(fastifyStatic, {
     root: join(__dirname, '..', 'public'),
     prefix: '/assets/',
+  });
+};
+
+const addHooks = (app) => {
+  app.decorateRequest('currentUser', null);
+  app.decorateRequest('signedIn', false);
+
+  app.addHook('preHandler', async (request) => {
+    const user = request.session.get('user');
+    if (user) {
+      request.currentUser = user;
+      request.signedIn = true;
+    }
   });
 };
 
@@ -61,6 +85,7 @@ export default () => {
   registerPlugins(app);
   setUpViews(app);
   setUpStaticAssets(app);
+  addHooks(app);
 
   return app;
 };
