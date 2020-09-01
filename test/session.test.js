@@ -55,12 +55,22 @@ tap.test('"/session" route actions:', async (t) => {
   t.equal(response3.statusCode, 302, testName3);
   const cookie = response3.headers['set-cookie'];
 
-  const expectedHtml = `<span>${signUpData.email}</span>`;
-  const testName4 = `'${request4.method} ${request4.url}' with right data returns body containing '${expectedHtml}'`;
-  const response4 = await app.inject({
+  const request5 = {
     method: 'GET',
     url: '/',
     headers: { cookie },
-  });
+  };
+  const expectedHtml = `<span>${signUpData.email}</span>`;
+  const testName4 = `'${request5.method} ${request5.url}' after authentication returns body containing '${expectedHtml}'`;
+  const response4 = await app.inject(request5);
   t.has(response4.body, expectedHtml, testName4);
+
+  const request6 = {
+    method: 'DELETE',
+    url: '/session',
+    headers: { cookie },
+  };
+  const testName5 = `'${request6.method} ${request6.url}' returns a status code of 302`;
+  const response5 = await app.inject(request6);
+  t.equal(response5.statusCode, 302, testName5);
 });

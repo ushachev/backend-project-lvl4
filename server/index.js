@@ -12,6 +12,7 @@ import fastifyReverseRoutes from 'fastify-reverse-routes';
 import fastifyFormbody from 'fastify-formbody';
 import fastifySecureSession from 'fastify-secure-session';
 import fastifyFlash from 'fastify-flash';
+import fastifyMethodOverride from 'fastify-method-override';
 import getHelpers from './helpers/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -32,6 +33,7 @@ const registerPlugins = (app) => {
       },
     })
     .register(fastifyFlash)
+    .register(fastifyMethodOverride)
     .register(autoLoad, {
       dir: join(__dirname, 'plugins'),
     })

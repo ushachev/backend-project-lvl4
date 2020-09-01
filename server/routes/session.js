@@ -18,5 +18,10 @@ export default async (app) => {
       request.flash('info', 'вы вошли в сервис');
       request.session.set('user', user.email);
       return reply.redirect(app.reverse('root'));
+    })
+    .delete('/session', async (request, reply) => {
+      request.session.set('user', null);
+      request.flash('info', 'вы вышли из сервиса');
+      return reply.redirect(app.reverse('root'));
     });
 };

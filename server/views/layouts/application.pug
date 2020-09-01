@@ -35,19 +35,6 @@ html
                   span.pl-2 срочно!
 
       main.container-fluid
-        // -
-        //   const reply = {
-        //     flash: () => ({
-        //       info: [
-        //         'qqqqqqqqqqq qqqqqqqqqq qqqqqqqqqq qqqqqqqqqq',
-        //         'wwwwwwww wwwwwwww www wwwwwwwww wwwwwwwwwwwww wwwwwww wwwwww',
-        //       ],
-        //       danger: [
-        //         'zzzzzzz zzzzzzzzz zzzzzzzz zzzzzzzzzzzzzzzzz',
-        //         'aaaaaaaaaa aaaaa aaaaaaaaaaaaa aaaaaaaaaaaaaa',
-        //       ],
-        //     }),
-        //   };
         .fixed-bottom.ml-5.mr-5.mb-5.pb-5
           .row
             .col-6.ml-auto
@@ -67,7 +54,9 @@ html
                 +icon('user')
                 span.pl-2 аккаунт
               .dropdown-divider
-              a.dropdown-item(class='ml-1', href="#")
+              form(id='signOut', action='/session', method='post')
+                input(type='hidden', name='_method', value='delete')
+              button.dropdown-item.ml-1(form='signOut', type='submit')
                 +icon('logout')
                 span.pl-2 выйти
 
