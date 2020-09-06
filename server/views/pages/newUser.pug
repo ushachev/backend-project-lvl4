@@ -11,7 +11,9 @@ block content
     .col-5.mx-auto.bg-dark
       form.p-5.mt-3(action=route('users'), method='post')
         fieldset.mb-4
-          +input('email', 'email*', values, errors)(type='email')
-          +input('password', 'пароль*', values, errors)(type='password')
-          +input('repeatedPassword', 'повторите пароль*', values, errors)(type='password')
+          +input('firstName', 'имя*', 'user', values, errors)(type='text')
+          +input('lastName', 'фамилия*', 'user', values, errors)(type='text')
+          +input('email', 'email*', 'mail', values, errors)(type='email')
+          +input('password', 'пароль*', 'key', values, errors)(type='password')
+          +input('repeatedPassword', 'повторите пароль*', 'repeat', values, errors)(type='password')
         +submit('сохранить')(class='btn-block')

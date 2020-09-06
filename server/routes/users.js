@@ -1,30 +1,45 @@
+import User from '../models/User.js';
+
 export default async (app) => {
   app
     .get('/users', { name: 'users' }, async () => app.read())
-    .get('/users/new', { name: 'newUser' }, async (request, reply) => (request.signedIn
-      ? reply.redirect(app.reverse('root'))
-      : reply.render('pages/newUser', { activeNavItem: 'newUser' })
-    ))
+    .get('/users/new', { name: 'newUser' }, (request, reply) => {
+      if (request.signedIn) {
+        reply.redirect(app.reverse('root'));
+      } else {
+        reply.render('pages/newUser', { activeNavItem: 'newUser' });
+      }
+    })
     .post('/users', async (request, reply) => {
-      const { email, password, repeatedPassword } = request.body;
+      const userForm = request.body;
       const errors = {};
 
-      if (!email) {
+      if (!userForm.firstName) {
+        errors.firstName = 'поле не должно быть пустым';
+      }
+      if (!userForm.lastName) {
+        errors.lastName = 'поле не должно быть пустым';
+      }
+      if (!userForm.email) {
         errors.email = 'неправильный email';
       }
-      if (!password) {
+      if (!userForm.password) {
         errors.password = 'должно быть не меньше 3 символов';
       }
-      if (password && repeatedPassword !== password) {
+      if (userForm.password && userForm.repeatedPassword !== userForm.password) {
         errors.repeatedPassword = 'должно совпадать с паролем';
       }
 
       if (Object.keys(errors).length > 0) {
-        return reply.code(422)
+        reply.code(422)
           .render('pages/newUser', { activeNavItem: 'newUser', values: request.body, errors });
+        return reply;
       }
-      app.save({ email, password });
-      request.flash('info', `${email} успешно зарегистрирван`);
-      return reply.redirect(app.reverse('newSession'));
+
+      const user = new User(userForm);
+      app.save(user);
+      request.flash('info', `${userForm.email} успешно зарегистрирван`);
+      reply.redirect(app.reverse('newSession'));
+      return reply;
     });
 };

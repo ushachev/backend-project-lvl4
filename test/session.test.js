@@ -16,6 +16,8 @@ tap.test('"/session" route actions:', async (t) => {
   t.equal(response1.statusCode, 200, testName1);
 
   const signUpData = {
+    firstName: 'Виталий',
+    lastName: 'Ушачёв',
     email: 'qaz@wsx.com',
     password: '123',
     repeatedPassword: '123',
@@ -60,7 +62,7 @@ tap.test('"/session" route actions:', async (t) => {
     url: '/',
     headers: { cookie },
   };
-  const expectedHtml = `<span>${signUpData.email}</span>`;
+  const expectedHtml = `<span>приветствуем, ${signUpData.firstName} ${signUpData.lastName}</span>`;
   const testName4 = `'${request5.method} ${request5.url}' after authentication returns body containing '${expectedHtml}'`;
   const response4 = await app.inject(request5);
   t.has(response4.body, expectedHtml, testName4);

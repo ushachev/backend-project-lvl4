@@ -11,6 +11,9 @@ tap.test('test storage decorator:', async (t) => {
 
   await instance.ready();
   instance.save(data);
-  const actual = instance.read();
-  t.same(actual, [data], 'what is saved is read');
+  t.same(instance.read(), [data], 'what is saved is read');
+
+  const newData = { email: 'wsx@qaz.com', password: '321' };
+  instance.update([newData]);
+  t.same(instance.read(), [newData], 'what is updated is read');
 });

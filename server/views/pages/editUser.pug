@@ -1,0 +1,43 @@
+extends ../layouts/application.pug
+
+block content
+  .row.justify-content-center.mt-3
+    - const user = reply.request.currentUser;
+    .col-auto.text-right
+      .list-group(role='tablist')
+        .list-group-item
+          p.lead аккаунт
+            span.d-block= user.email
+        a.list-group-item.list-group-item-action(data-toggle='list', href='#profile', role='tab', class= !activePasswordBlock && 'active') профиль
+        a.list-group-item.list-group-item-action(data-toggle='list', href='#changePassword', role='tab', class= activePasswordBlock && 'active') пароль
+        button.list-group-item.list-group-item-action.text-danger(type='button', data-toggle='modal', data-target='#deleteAccountModal') удалить аккаунт
+    .col-4.py-3.border.border-dark
+      .tab-content
+        .tab-pane(id='profile', role='tabpanel', class= !activePasswordBlock && 'active')
+          form(action=route('userProfile'), method='post')
+            +overrideInput('patch')
+            fieldset.mb-4
+              +input('firstName', 'имя', null, user)(type='text')
+              +input('lastName', 'фамилия', null, user)(type='text')
+            +submit('сохранить')
+        .tab-pane(id='changePassword', role='tabpanel', class= activePasswordBlock && 'active')
+          form(action=route('userPassword'), method='post')
+            +overrideInput('patch')
+            fieldset.mb-4
+              +input('password', 'старый пароль', null, {}, errors)(type='password')
+              +input('newPassword', 'новый пароль', null, {}, errors)(type='password')
+              +input('repeatedNewPassword', 'повторите пароль', null, {}, errors)(type='password')
+            +submit('сохранить')
+  .modal.fade(id='deleteAccountModal', tabindex='-1', aria-labelledby='deleteAccountModalLabel', aria-hidden='true')
+    .modal-dialog
+      .modal-content
+        .modal-header
+          h5.modal-title(id='exampleModalLabel') удаление аккаунта
+          button.close(type='button', data-dismiss='modal', aria-label='Close')
+            span(aria-hidden='true') &times;
+        .modal-body
+          .text-center внимание! отменить удаление аккаунта невозможно
+        .modal-footer
+          form(action=route('userAccount'), method='post')
+            +overrideInput('delete')
+            +submit('удалить')(class='btn-danger')

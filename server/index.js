@@ -69,9 +69,9 @@ const addHooks = (app) => {
   app.decorateRequest('signedIn', false);
 
   app.addHook('preHandler', async (request) => {
-    const user = request.session.get('user');
-    if (user) {
-      request.currentUser = user;
+    const userId = request.session.get('userId');
+    if (userId) {
+      request.currentUser = app.read().find((user) => user.id === userId) || {};
       request.signedIn = true;
     }
   });

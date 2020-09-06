@@ -45,32 +45,34 @@ html
                       span(aria-hidden='true') &times;
 
         .bg-dark.p-3.pb-5.mb-n5
+          - const { firstName, lastName } = reply.request.currentUser;
           .dropdowm.text-right
             a.dropdown-toggle.text-reset.text-decoration-none(data-toggle='dropdown', href='#', role='button', id='dropdownMenuLink', aria-haspopup='true', aria-expanded='false', data-offset='20, 20')
-              span.mr-2 приветствуем,
-              span= user
+              span приветствуем, #{firstName} #{lastName}
             .dropdown-menu.dropdown-menu-right(aria-labelledby='dropdownMenuLink')
-              a.dropdown-item(href="#")
+              a.dropdown-item(href=route('userAccount'))
                 +icon('user')
                 span.pl-2 аккаунт
               .dropdown-divider
-              form(id='signOut', action='/session', method='post')
-                input(type='hidden', name='_method', value='delete')
+              form(id='signOut', action=route('session'), method='post')
+                //- input(type='hidden', name='_method', value='delete')
+                +overrideInput('delete')
               button.dropdown-item.ml-1(form='signOut', type='submit')
                 +icon('logout')
                 span.pl-2 выйти
 
-        .row.justify-content-around.my-3
-          .col-5
-            .bg-dark
-              .card.border-0.p-3
-                h4.display-5 виджет первый
-          .col-5
-            .bg-dark
-              .card.border-0.p-3
-                h4.display-5 виджет второй
+        .container-fluid
+          .row.justify-content-around.my-3
+            .col-5
+              .bg-dark
+                .card.border-0.p-3
+                  h4.display-5 виджет первый
+            .col-5
+              .bg-dark
+                .card.border-0.p-3
+                  h4.display-5 виджет второй
 
-        block content
+          block content
 
     footer.bg-dark.m-3.mt-auto.px-4.py-3
       .row.justify-content-between

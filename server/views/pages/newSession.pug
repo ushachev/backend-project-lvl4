@@ -11,6 +11,6 @@ block content
     .col-5.mx-auto.bg-dark
       form.p-5.mt-3(action=route('session'), method='post')
         fieldset.mb-4
-          +input('email', 'email*', values)(type='email')
-          +input('password', 'пароль*')(type='password')
+          +input('email', 'email*', 'mail', values)(type='email')
+          +input('password', 'пароль*', 'key')(type='password')
         +submit('войти')(class='btn-block')

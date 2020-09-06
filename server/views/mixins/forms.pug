@@ -1,19 +1,13 @@
 include ./components.pug
 
-- 
-  const iconNameMapping = {
-    email: 'mail',
-    password: 'key',
-    repeatedPassword: 'repeat',
-  }
-
-mixin input(inputName, labelValue, values = {}, errors = {})
+mixin input(inputName, labelValue, iconName, values = {}, errors = {})
   .form-group
     label.form-control-label(for=inputName)= labelValue
     .input-group
-      .input-group-prepend
-        span.input-group-text.border-secondary
-          +icon(iconNameMapping[inputName])
+      if iconName
+        .input-group-prepend
+          span.input-group-text.border-secondary
+            +icon(iconName)
       input.form-control(
         name=inputName,
         id=inputName,
@@ -22,6 +16,9 @@ mixin input(inputName, labelValue, values = {}, errors = {})
       )&attributes(attributes)
       if errors[inputName]
         .invalid-feedback= errors[inputName]
+
+mixin overrideInput(method)
+  input(type='hidden', name='_method', value=method)
 
 mixin submit(label)
   button.btn.btn-primary(type='submit')&attributes(attributes)= label

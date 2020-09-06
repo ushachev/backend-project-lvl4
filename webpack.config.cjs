@@ -7,6 +7,7 @@ const routesMapping = {
   newUser: 'newUser',
   newSession: 'newSession',
   index: 'index',
+  userAccount: 'editUser',
 };
 
 const templateParameters = {
@@ -19,6 +20,14 @@ const templateParameters = {
   reply: {
     flash() {
       return [];
+    },
+    request: {
+      currentUser: {
+        id: 1,
+        lastName: 'Ushachev',
+        firstName: 'Vitaliy',
+        email: 'admin@example.com',
+      },
     },
   },
 };

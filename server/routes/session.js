@@ -1,9 +1,12 @@
 export default async (app) => {
   app
-    .get('/session/new', { name: 'newSession' }, async (request, reply) => (request.signedIn
-      ? reply.redirect(app.reverse('root'))
-      : reply.render('pages/newSession', { activeNavItem: 'newSession' })
-    ))
+    .get('/session/new', { name: 'newSession' }, (request, reply) => {
+      if (request.signedIn) {
+        reply.redirect(app.reverse('root'));
+      } else {
+        reply.render('pages/newSession', { activeNavItem: 'newSession' });
+      }
+    })
     .post('/session', { name: 'session' }, async (request, reply) => {
       const { email, password } = request.body;
       const users = app.read();
@@ -11,17 +14,19 @@ export default async (app) => {
 
       if (!user || user.password !== password) {
         request.flash('danger', 'неправильный email или пароль');
-        return reply.code(422)
+        reply.code(422)
           .render('pages/newSession', { activeNavItem: 'newSession', values: { email } });
+        return reply;
       }
 
       request.flash('info', 'вы вошли в сервис');
-      request.session.set('user', user.email);
-      return reply.redirect(app.reverse('root'));
+      request.session.set('userId', user.id);
+      reply.redirect(app.reverse('root'));
+      return reply;
     })
-    .delete('/session', async (request, reply) => {
-      request.session.set('user', null);
+    .delete('/session', (request, reply) => {
+      request.session.set('userId', null);
       request.flash('info', 'вы вышли из сервиса');
-      return reply.redirect(app.reverse('root'));
+      reply.redirect(app.reverse('root'));
     });
 };
