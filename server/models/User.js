@@ -7,12 +7,12 @@ const generateId = () => {
 
 export default class User {
   constructor({
-    firstName, lastName, email, password,
+    firstName, lastName, email, passwordDigest,
   }) {
     this.id = generateId();
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
-    this.password = password;
+    this.passwordDigest = passwordDigest;
   }
 }

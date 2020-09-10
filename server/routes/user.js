@@ -1,3 +1,5 @@
+import encrypt from '../lib/secure.js';
+
 export default async (app) => {
   app
     .get('/user', { name: 'userAccount' }, (request, reply) => {
@@ -36,8 +38,9 @@ export default async (app) => {
     .patch('/user/password', { name: 'userPassword' }, async (request, reply) => {
       const { password, newPassword, repeatedNewPassword } = request.body;
       const errors = {};
+      const user = request.currentUser;
 
-      if (!password || password !== request.currentUser.password) {
+      if (!password || user.passwordDigest !== encrypt(password)) {
         errors.password = 'неверный пароль';
       }
       if (!errors.password && !newPassword) {
@@ -52,9 +55,7 @@ export default async (app) => {
         return reply;
       }
 
-      const user = request.currentUser;
-
-      user.password = newPassword;
+      user.passwordDigest = encrypt(newPassword);
       request.flash('info', `аккаунт ${user.email} изменён`);
 
       reply.redirect(app.reverse('userAccount'));

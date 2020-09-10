@@ -1,0 +1,20 @@
+extends ../layouts/application.pug
+
+block content
+  .row
+    .col
+      table.table.table-striped.table-hover
+        thead
+          tr
+            th id
+            th полное имя
+            th email
+            th дата создания
+
+        tbody
+          each user in users
+            tr
+              td= user.id
+              td= `${user.firstName} ${user.lastName}` 
+              td= user.email
+              td= new Date().toLocaleString()

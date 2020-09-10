@@ -1,4 +1,5 @@
 import tap from 'tap';
+import faker from 'faker';
 import formAutoContent from 'form-auto-content';
 import getApp from '../server/index.js';
 
@@ -15,12 +16,13 @@ tap.test('"/users" route actions:', async (t) => {
   const response1 = await app.inject(request1);
   t.equal(response1.statusCode, 200, testName1);
 
+  const password = faker.internet.password();
   const signUpData = {
-    firstName: 'Виталий',
-    lastName: 'Ушачёв',
-    email: 'qaz@wsx.com',
-    password: '123',
-    repeatedPassword: '123',
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    password,
+    repeatedPassword: password,
   };
   const request2 = {
     method: 'POST',
@@ -46,11 +48,20 @@ tap.test('"/users" route actions:', async (t) => {
   t.has(response3.body, expectedHtml, testName4);
 
   const request4 = {
+    method: 'POST',
+    url: '/session',
+    ...formAutoContent({ email: signUpData.email, password: signUpData.password }),
+  };
+  const response4 = await app.inject(request4);
+  const cookie = response4.headers['set-cookie'];
+
+  const request5 = {
     method: 'GET',
     url: '/users',
+    headers: { cookie },
   };
-  const testName5 = `'${request4.method} ${request4.url}' returns posted data`;
-  const response4 = await app.inject(request4);
-  const { repeatedPassword: _unneeded, ...expectedData } = signUpData;
-  t.same(JSON.parse(response4.body), [{ ...expectedData, id: 1 }], testName5);
+  const testName5 = `'${request5.method} ${request5.url}' returns body containing posted data`;
+  const response5 = await app.inject(request5);
+  const expectedHtml2 = `<td>${signUpData.firstName} ${signUpData.lastName}</td><td>${signUpData.email}</td>`;
+  t.has(response5.body, expectedHtml2, testName5);
 });

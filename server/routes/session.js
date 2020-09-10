@@ -1,3 +1,5 @@
+import encrypt from '../lib/secure.js';
+
 export default async (app) => {
   app
     .get('/session/new', { name: 'newSession' }, (request, reply) => {
@@ -12,7 +14,7 @@ export default async (app) => {
       const users = app.read();
       const user = email && users.find((u) => u.email === email);
 
-      if (!user || user.password !== password) {
+      if (!user || user.passwordDigest !== encrypt(password)) {
         request.flash('danger', 'неправильный email или пароль');
         reply.code(422)
           .render('pages/newSession', { activeNavItem: 'newSession', values: { email } });

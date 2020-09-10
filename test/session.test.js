@@ -1,4 +1,5 @@
 import tap from 'tap';
+import faker from 'faker';
 import formAutoContent from 'form-auto-content';
 import getApp from '../server/index.js';
 
@@ -15,12 +16,13 @@ tap.test('"/session" route actions:', async (t) => {
   const response1 = await app.inject(request1);
   t.equal(response1.statusCode, 200, testName1);
 
+  const password = faker.internet.password();
   const signUpData = {
-    firstName: 'Виталий',
-    lastName: 'Ушачёв',
-    email: 'qaz@wsx.com',
-    password: '123',
-    repeatedPassword: '123',
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    password,
+    repeatedPassword: password,
   };
   const request2 = {
     method: 'POST',
@@ -31,7 +33,7 @@ tap.test('"/session" route actions:', async (t) => {
 
   const wrongSignInData = {
     email: signUpData.email,
-    password: '321',
+    password: 'wrong',
   };
   const request3 = {
     method: 'POST',

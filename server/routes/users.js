@@ -1,8 +1,17 @@
 import User from '../models/User.js';
+import encrypt from '../lib/secure.js';
 
 export default async (app) => {
   app
-    .get('/users', { name: 'users' }, async () => app.read())
+    .get('/users', { name: 'users' }, async (request, reply) => {
+      if (!request.signedIn) {
+        reply.redirect(app.reverse('root'));
+        return reply;
+      }
+      const users = app.read();
+      reply.render('/pages/users', { users });
+      return reply;
+    })
     .get('/users/new', { name: 'newUser' }, (request, reply) => {
       if (request.signedIn) {
         reply.redirect(app.reverse('root'));
@@ -36,7 +45,7 @@ export default async (app) => {
         return reply;
       }
 
-      const user = new User(userForm);
+      const user = new User({ ...userForm, passwordDigest: encrypt(userForm.password) });
       app.save(user);
       request.flash('info', `${userForm.email} успешно зарегистрирван`);
       reply.redirect(app.reverse('newSession'));

@@ -2,12 +2,12 @@ extends ../layouts/application.pug
 
 block content
   .row.justify-content-center.mt-3
-    - const user = reply.request.currentUser;
+    - const currentUser = reply.request.currentUser;
     .col-auto.text-right
       .list-group(role='tablist')
         .list-group-item
           p.lead аккаунт
-            span.d-block= user.email
+            span.d-block= currentUser.email
         a.list-group-item.list-group-item-action(data-toggle='list', href='#profile', role='tab', class= !activePasswordBlock && 'active') профиль
         a.list-group-item.list-group-item-action(data-toggle='list', href='#changePassword', role='tab', class= activePasswordBlock && 'active') пароль
         button.list-group-item.list-group-item-action.text-danger(type='button', data-toggle='modal', data-target='#deleteAccountModal') удалить аккаунт
@@ -17,8 +17,8 @@ block content
           form(action=route('userProfile'), method='post')
             +overrideInput('patch')
             fieldset.mb-4
-              +input('firstName', 'имя', null, user)(type='text')
-              +input('lastName', 'фамилия', null, user)(type='text')
+              +input('firstName', 'имя', null, currentUser)(type='text')
+              +input('lastName', 'фамилия', null, currentUser)(type='text')
             +submit('сохранить')
         .tab-pane(id='changePassword', role='tabpanel', class= activePasswordBlock && 'active')
           form(action=route('userPassword'), method='post')

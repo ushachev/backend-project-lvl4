@@ -1,4 +1,5 @@
 import tap from 'tap';
+import faker from 'faker';
 import formAutoContent from 'form-auto-content';
 import { merge } from 'lodash';
 import getApp from '../server/index.js';
@@ -8,13 +9,15 @@ tap.test('"/user" route actions:', async (t) => {
 
   t.tearDown(() => app.close());
 
+  const password = faker.internet.password();
   const signUpData = {
-    firstName: 'Виталий',
-    lastName: 'Ушачёв',
-    email: 'qaz@wsx.com',
-    password: '123',
-    repeatedPassword: '123',
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    password,
+    repeatedPassword: password,
   };
+
   const request1 = {
     method: 'POST',
     url: '/users',
@@ -40,8 +43,8 @@ tap.test('"/user" route actions:', async (t) => {
   t.equal(response2.statusCode, 200, testName1);
 
   const changedProfileData = {
-    firstName: 'Джон',
-    lastName: 'Сноу',
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
   };
   const request4 = {
     method: 'PATCH',
@@ -52,10 +55,11 @@ tap.test('"/user" route actions:', async (t) => {
   const response3 = await app.inject(request4);
   t.equal(response3.statusCode, 302, testName2);
 
+  const newPassword = faker.internet.password();
   const changedPasswordData = {
     password: signUpData.password,
-    newPassword: '321',
-    repeatedNewPassword: '321',
+    newPassword,
+    repeatedNewPassword: newPassword,
   };
   const request5 = {
     method: 'PATCH',
@@ -69,17 +73,12 @@ tap.test('"/user" route actions:', async (t) => {
   const request6 = {
     method: 'GET',
     url: '/users',
+    headers: { cookie },
   };
-  const testName4 = `'${request6.method} ${request6.url}' returns changed data`;
+  const testName4 = `'${request6.method} ${request6.url}' returns body containing changed data`;
   const response5 = await app.inject(request6);
-  const expectedData = {
-    id: 1,
-    firstName: changedProfileData.firstName,
-    lastName: changedProfileData.lastName,
-    email: signUpData.email,
-    password: changedPasswordData.newPassword,
-  };
-  t.same(JSON.parse(response5.body), [expectedData], testName4);
+  const expectedHtml = `<td>${changedProfileData.firstName} ${changedProfileData.lastName}</td><td>${signUpData.email}</td>`;
+  t.has(response5.body, expectedHtml, testName4);
 
   const request7 = {
     method: 'DELETE',
@@ -94,10 +93,11 @@ tap.test('"/user" route actions:', async (t) => {
   const request8 = {
     method: 'GET',
     url: '/users',
+    headers: { cookie: updatedCookie },
   };
-  const testName6 = `'${request8.method} ${request8.url}' returns empty data`;
+  const testName6 = `'${request8.method} ${request8.url}' after deleting account returns a status code of 302`;
   const response7 = await app.inject(request8);
-  t.same(JSON.parse(response7.body), [], testName6);
+  t.equal(response7.statusCode, 302, testName6);
 
   const request9 = {
     method: 'GET',

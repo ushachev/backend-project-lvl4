@@ -8,6 +8,7 @@ const routesMapping = {
   newSession: 'newSession',
   index: 'index',
   userAccount: 'editUser',
+  users: 'users',
 };
 
 const templateParameters = {
