@@ -1,54 +1,31 @@
-import User from '../models/User.js';
-import encrypt from '../lib/secure.js';
+import getValidator from '../lib/validators.js';
+import { requiredSignedIn, requiredSignedOut } from '../lib/preHandlers.js';
 
 export default async (app) => {
   app
-    .get('/users', { name: 'users' }, async (request, reply) => {
-      if (!request.signedIn) {
-        reply.redirect(app.reverse('root'));
-        return reply;
-      }
-      const users = app.read();
+    .get('/users', { name: 'users', preHandler: requiredSignedIn }, async (request, reply) => {
+      const users = await app.objection.models.user.query();
       reply.render('/pages/users', { users });
       return reply;
     })
-    .get('/users/new', { name: 'newUser' }, (request, reply) => {
-      if (request.signedIn) {
-        reply.redirect(app.reverse('root'));
-      } else {
-        reply.render('pages/newUser', { activeNavItem: 'newUser' });
-      }
+    .get('/users/new', { name: 'newUser', preHandler: requiredSignedOut }, (request, reply) => {
+      reply.render('pages/newUser');
     })
     .post('/users', async (request, reply) => {
-      const userForm = request.body;
-      const errors = {};
+      try {
+        const { repeatedPassword, ...userData } = request.body;
+        const validateRepeatedPassword = getValidator('repeatedPassword');
 
-      if (!userForm.firstName) {
-        errors.firstName = 'поле не должно быть пустым';
-      }
-      if (!userForm.lastName) {
-        errors.lastName = 'поле не должно быть пустым';
-      }
-      if (!userForm.email) {
-        errors.email = 'неправильный email';
-      }
-      if (!userForm.password) {
-        errors.password = 'должно быть не меньше 3 символов';
-      }
-      if (userForm.password && userForm.repeatedPassword !== userForm.password) {
-        errors.repeatedPassword = 'должно совпадать с паролем';
-      }
+        const user = await app.objection.models.user.fromJson(userData);
+        validateRepeatedPassword(repeatedPassword === userData.password);
+        await app.objection.models.user.query().insert(user);
+        request.flash('info', `${user.email} успешно зарегистрирван`);
+        reply.redirect(app.reverse('newSession'));
 
-      if (Object.keys(errors).length > 0) {
-        reply.code(422)
-          .render('pages/newUser', { activeNavItem: 'newUser', values: request.body, errors });
+        return reply;
+      } catch ({ data }) {
+        reply.code(422).render('pages/newUser', { values: request.body, errors: data });
         return reply;
       }
-
-      const user = new User({ ...userForm, passwordDigest: encrypt(userForm.password) });
-      app.save(user);
-      request.flash('info', `${userForm.email} успешно зарегистрирван`);
-      reply.redirect(app.reverse('newSession'));
-      return reply;
     });
 };

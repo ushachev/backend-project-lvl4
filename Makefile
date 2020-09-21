@@ -19,4 +19,10 @@ test:
 test-coverage:
 	npm test
 
+migrate:
+	npx knex --esm migrate:latest
+
+migration:
+	npx knex --esm migrate:make ${name}
+
 .PHONY: install test

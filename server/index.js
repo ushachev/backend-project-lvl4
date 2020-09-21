@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 
 import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { dirname, join, basename } from 'path';
 import fs from 'fs';
 import fastify from 'fastify';
 import autoLoad from 'fastify-autoload';
@@ -13,6 +13,10 @@ import fastifyFormbody from 'fastify-formbody';
 import fastifySecureSession from 'fastify-secure-session';
 import fastifyFlash from 'fastify-flash';
 import fastifyMethodOverride from 'fastify-method-override';
+import fastifyObjectionjs from 'fastify-objectionjs';
+
+import knexConfig from '../knexfile.js';
+import models from './models/index.js';
 import getHelpers from './helpers/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -34,6 +38,10 @@ const registerPlugins = (app) => {
     })
     .register(fastifyFlash)
     .register(fastifyMethodOverride)
+    .register(fastifyObjectionjs, {
+      knexConfig: knexConfig[mode],
+      models,
+    })
     .register(autoLoad, {
       dir: join(__dirname, 'plugins'),
     })
@@ -53,7 +61,7 @@ const setUpViews = (app) => {
   });
 
   app.decorateReply('render', function render(viewPath, locals) {
-    this.view(viewPath, { ...locals, reply: this });
+    this.view(viewPath, { ...locals, reply: this, activeNavItem: basename(viewPath) });
   });
 };
 
@@ -71,8 +79,13 @@ const addHooks = (app) => {
   app.addHook('preHandler', async (request) => {
     const userId = request.session.get('userId');
     if (userId) {
-      request.currentUser = app.read().find((user) => user.id === userId) || {};
+      request.currentUser = await app.objection.models.user.query().findById(userId);
       request.signedIn = true;
+    }
+  });
+  app.addHook('onReady', async function migrate() {
+    if (isTest) {
+      await this.objection.knex.migrate.latest();
     }
   });
 };

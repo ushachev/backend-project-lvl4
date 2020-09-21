@@ -17,4 +17,4 @@ block content
               td= user.id
               td= `${user.firstName} ${user.lastName}` 
               td= user.email
-              td= new Date().toLocaleString()
+              td= formatDate(user.createdAt)

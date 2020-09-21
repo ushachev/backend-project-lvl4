@@ -1,23 +1,18 @@
+import { requiredSignedOut } from '../lib/preHandlers.js';
 import encrypt from '../lib/secure.js';
 
 export default async (app) => {
   app
-    .get('/session/new', { name: 'newSession' }, (request, reply) => {
-      if (request.signedIn) {
-        reply.redirect(app.reverse('root'));
-      } else {
-        reply.render('pages/newSession', { activeNavItem: 'newSession' });
-      }
+    .get('/session/new', { name: 'newSession', preHandler: requiredSignedOut }, (_req, reply) => {
+      reply.render('pages/newSession');
     })
     .post('/session', { name: 'session' }, async (request, reply) => {
       const { email, password } = request.body;
-      const users = app.read();
-      const user = email && users.find((u) => u.email === email);
+      const user = email && await app.objection.models.user.query().findOne({ email });
 
       if (!user || user.passwordDigest !== encrypt(password)) {
         request.flash('danger', 'неправильный email или пароль');
-        reply.code(422)
-          .render('pages/newSession', { activeNavItem: 'newSession', values: { email } });
+        reply.code(422).render('pages/newSession', { values: { email } });
         return reply;
       }
 
@@ -28,7 +23,7 @@ export default async (app) => {
     })
     .delete('/session', (request, reply) => {
       request.session.set('userId', null);
-      request.flash('info', 'вы вышли из сервиса');
+      request.flash('info', 'вы вышли из аккаунта');
       reply.redirect(app.reverse('root'));
     });
 };

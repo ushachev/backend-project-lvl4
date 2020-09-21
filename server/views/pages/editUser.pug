@@ -17,16 +17,16 @@ block content
           form(action=route('userProfile'), method='post')
             +overrideInput('patch')
             fieldset.mb-4
-              +input('firstName', 'имя', null, currentUser)(type='text')
-              +input('lastName', 'фамилия', null, currentUser)(type='text')
+              +input('firstName', 'имя', null, values || currentUser, errors)(type='text')
+              +input('lastName', 'фамилия', null, values || currentUser, errors)(type='text')
             +submit('сохранить')
         .tab-pane(id='changePassword', role='tabpanel', class= activePasswordBlock && 'active')
           form(action=route('userPassword'), method='post')
             +overrideInput('patch')
             fieldset.mb-4
-              +input('password', 'старый пароль', null, {}, errors)(type='password')
-              +input('newPassword', 'новый пароль', null, {}, errors)(type='password')
-              +input('repeatedNewPassword', 'повторите пароль', null, {}, errors)(type='password')
+              +input('currentPassword', 'старый пароль', null, {}, errors)(type='password')
+              +input('password', 'новый пароль', null, {}, errors)(type='password')
+              +input('repeatedPassword', 'повторите пароль', null, {}, errors)(type='password')
             +submit('сохранить')
   .modal.fade(id='deleteAccountModal', tabindex='-1', aria-labelledby='deleteAccountModalLabel', aria-hidden='true')
     .modal-dialog

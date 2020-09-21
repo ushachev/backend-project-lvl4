@@ -1,18 +1,30 @@
-let id = 0;
+import objection from 'objection';
+import objectionUnique from 'objection-unique';
+import encrypt from '../lib/secure.js';
 
-const generateId = () => {
-  id += 1;
-  return id;
-};
+const { Model } = objection;
+const unique = objectionUnique({ fields: ['email'] });
 
-export default class User {
-  constructor({
-    firstName, lastName, email, passwordDigest,
-  }) {
-    this.id = generateId();
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.email = email;
-    this.passwordDigest = passwordDigest;
+export default class User extends unique(Model) {
+  static get tableName() {
+    return 'users';
+  }
+
+  static get jsonSchema() {
+    return {
+      type: 'object',
+      required: ['firstName', 'lastName', 'email', 'password'],
+      properties: {
+        id: { type: 'integer' },
+        firstName: { type: 'string', minLength: 1 },
+        lastName: { type: 'string', minLength: 1 },
+        email: { type: 'string', format: 'email' },
+        password: { type: 'string', minLength: 3 },
+      },
+    };
+  }
+
+  set password(value) {
+    this.passwordDigest = encrypt(value);
   }
 }

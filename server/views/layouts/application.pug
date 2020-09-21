@@ -21,7 +21,7 @@ html
               span.navbar-toggler-icon
           #navbarNav.collapse.navbar-collapse.align-self-start.w-100.mt-3
             ul.navbar-nav.flex-column.text-nowrap.align-self-stretch.border-top.border-secondary.pt-3
-              li.nav-item(class=(activeNavItem === '' && 'active'))
+              li.nav-item(class=(activeNavItem === 'users' && 'active'))
                 a.nav-link(href=route('users'))
                   +icon('users')
                   span.pl-2 пользователи

@@ -1,26 +1,33 @@
 import tap from 'tap';
 import getApp from '../server/index.js';
 
-tap.test('requests route:', async (t) => {
+tap.test('server main answers test', async (subTest) => {
+  const { test } = subTest;
   const app = getApp();
 
-  t.tearDown(() => app.close());
+  subTest.tearDown(() => app.close());
 
-  const response1 = await app.inject({
-    method: 'GET',
-    url: '/',
+  test('"/"', async (t) => {
+    const response = await app.inject({
+      method: 'GET',
+      url: '/',
+    });
+    t.equal(response.statusCode, 200, 'returns a status code of 200');
   });
-  t.equal(response1.statusCode, 200, '"/" returns a status code of 200');
 
-  const response2 = await app.inject({
-    method: 'GET',
-    url: '/wrong-path',
+  test('"/wrong-path"', async (t) => {
+    const response = await app.inject({
+      method: 'GET',
+      url: '/wrong-path',
+    });
+    t.equal(response.statusCode, 404, 'returns a status code of 404');
   });
-  t.equal(response2.statusCode, 404, '"/wrong-path" returns a status code of 404');
 
-  const response3 = await app.inject({
-    method: 'GET',
-    url: '/throw',
+  test('"/throw"', async (t) => {
+    const response = await app.inject({
+      method: 'GET',
+      url: '/throw',
+    });
+    t.equal(response.statusCode, 500, 'returns a status code of 500');
   });
-  t.equal(response3.statusCode, 500, '"/throw" returns a status code of 500');
 });

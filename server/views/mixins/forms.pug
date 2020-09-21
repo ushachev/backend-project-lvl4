@@ -1,6 +1,7 @@
 include ./components.pug
 
 mixin input(inputName, labelValue, iconName, values = {}, errors = {})
+  - const inputErrors = errors[inputName];
   .form-group
     label.form-control-label(for=inputName)= labelValue
     .input-group
@@ -12,10 +13,10 @@ mixin input(inputName, labelValue, iconName, values = {}, errors = {})
         name=inputName,
         id=inputName,
         value=values[inputName],
-        class=errors[inputName] ? 'is-invalid' : 'border-secondary'
+        class=inputErrors ? 'is-invalid' : 'border-secondary'
       )&attributes(attributes)
-      if errors[inputName]
-        .invalid-feedback= errors[inputName]
+      if inputErrors
+        .invalid-feedback= getInputErrorMessage(inputErrors)
 
 mixin overrideInput(method)
   input(type='hidden', name='_method', value=method)
