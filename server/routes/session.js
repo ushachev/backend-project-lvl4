@@ -1,12 +1,12 @@
-import { requiredSignedOut } from '../lib/preHandlers.js';
+import { requireSignedOut } from '../lib/preHandlers.js';
 import encrypt from '../lib/secure.js';
 
 export default async (app) => {
   app
-    .get('/session/new', { name: 'newSession', preHandler: requiredSignedOut }, (_req, reply) => {
+    .get('/session/new', { name: 'newSession', preHandler: requireSignedOut }, (_req, reply) => {
       reply.render('pages/newSession');
     })
-    .post('/session', { name: 'session' }, async (request, reply) => {
+    .post('/session', { name: 'session', preHandler: requireSignedOut }, async (request, reply) => {
       const { email, password } = request.body;
       const user = email && await app.objection.models.user.query().findOne({ email });
 

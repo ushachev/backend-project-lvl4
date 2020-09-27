@@ -25,10 +25,18 @@ html
                 a.nav-link(href=route('users'))
                   +icon('users')
                   span.pl-2 пользователи
-              li.nav-item.mb-2(class=(activeNavItem === '' && 'active'))
+              li.nav-item(class=(activeNavItem === '' && 'active'))
                 a.nav-link(href='#')
                   +icon('list-check')
                   span.pl-2 задачи
+              li.nav-item(class=(activeNavItem === 'taskStatuses' && 'active'))
+                a.nav-link(href=route('taskStatuses'))
+                  +icon('checks')
+                  span.pl-2 статусы
+              li.nav-item.mb-2(class=(activeNavItem === '' && 'active'))
+                a.nav-link(href='#')
+                  +icon('tag')
+                  span.pl-2 метки
               li.nav-item.mt-auto.border-top.border-secondary(class=(activeNavItem === '' && 'active'))
                 a.nav-link.text-lg-center(href='#')
                   +icon('urgent')

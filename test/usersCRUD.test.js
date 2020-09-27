@@ -10,6 +10,9 @@ tap.test('users CRUD test', async (subTest) => {
 
   subTest.tearDown(() => app.close());
 
+  await app.ready();
+  await app.objection.knex.migrate.latest();
+
   test('GET /users/new availability:', async (t) => {
     const response = await app.inject({
       method: 'GET',
@@ -82,7 +85,6 @@ tap.test('users CRUD test', async (subTest) => {
       }),
     });
     t.equal(authenticationResponse.statusCode, 302, 'POST /session returns a status code of 302');
-
     const cookie = authenticationResponse.headers['set-cookie'];
 
     const signedInRootResponse = await app.inject({

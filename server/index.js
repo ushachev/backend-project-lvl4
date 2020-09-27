@@ -83,11 +83,6 @@ const addHooks = (app) => {
       request.signedIn = true;
     }
   });
-  app.addHook('onReady', async function migrate() {
-    if (isTest) {
-      await this.objection.knex.migrate.latest();
-    }
-  });
 };
 
 export default () => {

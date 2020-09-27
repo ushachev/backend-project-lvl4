@@ -3,7 +3,8 @@ include ./components.pug
 mixin input(inputName, labelValue, iconName, values = {}, errors = {})
   - const inputErrors = errors[inputName];
   .form-group
-    label.form-control-label(for=inputName)= labelValue
+    if labelValue
+      label.form-control-label(for=inputName)= labelValue
     .input-group
       if iconName
         .input-group-prepend
