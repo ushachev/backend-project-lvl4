@@ -6,10 +6,10 @@ block content
       table.table.table-striped.table-hover
         thead
           tr
-            th id
-            th полное имя
-            th email
-            th дата создания
+            th= t('views.users.index.id')
+            th= t('views.users.index.fullName')
+            th= t('views.users.index.email')
+            th= t('views.users.index.createdAt')
 
         tbody
           each user in users

@@ -5,11 +5,11 @@ export default async (app) => {
   app
     .get('/users', { name: 'users', preHandler: requireSignedIn }, async (request, reply) => {
       const users = await app.objection.models.user.query();
-      reply.render('/pages/users', { users });
+      reply.render('users/index', { users });
       return reply;
     })
     .get('/users/new', { name: 'newUser', preHandler: requireSignedOut }, (request, reply) => {
-      reply.render('pages/newUser');
+      reply.render('users/new');
     })
     .post('/users', { preHandler: requireSignedOut }, async (request, reply) => {
       try {
@@ -19,12 +19,13 @@ export default async (app) => {
         const user = await app.objection.models.user.fromJson(userData);
         validateRepeatedPassword(repeatedPassword === userData.password);
         await app.objection.models.user.query().insert(user);
-        request.flash('info', `${user.email} успешно зарегистрирван`);
+        request.flash('info', request.t('flash.users.create.success', { account: user.email }));
         reply.redirect(app.reverse('newSession'));
 
         return reply;
       } catch ({ data }) {
-        reply.code(422).render('pages/newUser', { values: request.body, errors: data });
+        request.flash('danger', request.t('flash.users.create.error'));
+        reply.code(422).render('users/new', { values: request.body, errors: data });
         return reply;
       }
     });

@@ -1,8 +1,10 @@
 include ../mixins/forms.pug
 include ../mixins/components.pug
 
+- const t = reply.request.t;
+
 doctype html
-html
+html(lang="ru")
   head
     meta(charset='utf-8')
     meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
@@ -18,14 +20,15 @@ html
         span.navbar-toggler-icon
       #navbarNav.collapse.navbar-collapse
         ul.navbar-nav.ml-auto
-          li.nav-item(class=(activeNavItem === 'newUser' && 'active'))
+          - const { url } = reply.request;
+          li.nav-item(class=(url === route('newUser') && 'active'))
             a.nav-link(href=route('newUser'))
               +icon('user-plus')
-              span.pl-2 регистрация
-          li.nav-item.ml-lg-3(class=(activeNavItem === 'newSession' && 'active'))
+              span.pl-2= t('layouts.unauthenticated.signUp')
+          li.nav-item.ml-lg-3(class=(url === route('newSession') && 'active'))
             a.nav-link(href=route('newSession'))
               +icon('login')
-              span.pl-2 войти
+              span.pl-2= t('layouts.unauthenticated.signIn')
 
     main.container.mb-5
       .fixed-bottom.ml-5.mr-5.mb-5.pb-5
@@ -44,9 +47,9 @@ html
         .col-auto
           a.text-secondary.mr-3(href='https://github.com/ushachev/backend-project-lvl4', target='_blank')
             +icon('brand-github')
-            span.ml-2 код проекта
+            span.ml-2= t('layouts.application.projectCode')
         .col-auto
-          copy ushachev, 2020
+          copy= t('layouts.application.author')
 
     script(src='https://code.jquery.com/jquery-3.5.1.slim.min.js', integrity='sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj', crossorigin='anonymous')
     script(src=assetPath('bootstrap.bundle.min.js'))

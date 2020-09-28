@@ -1,0 +1,33 @@
+extends ../layouts/unauthenticated.pug
+
+block content
+  .row.mb-n5
+    .col-auto.mr-auto.ml-5
+      .bg-dark
+        .card.border-0
+          .card-body
+            h1.display-4= t('views.welcome.index.title')
+  .jumbotron.mb-n5
+    p.lead.mt-4= t('views.welcome.index.description') 
+      a.text-nowrap(href='https://ru.hexlet.io/professions/backend', target='_blank')= ` ${t('views.welcome.index.profession')}`
+    p= t('views.welcome.index.platform')
+      a(href='https://ru.hexlet.io', target='_blank')= ` ${t('views.welcome.index.link')}`
+  .row.mt-n5
+    .col-auto.ml-auto.mr-5
+      .bg-dark
+        .card.border-0
+          .card-body
+              h4.card-title= t('views.welcome.index.realized')
+              ul.list-group.list-group-flush
+                - 
+                  const features = [
+                    t('views.welcome.index.feature1'),
+                    t('views.welcome.index.feature2'),
+                    t('views.welcome.index.feature3'),
+                    t('views.welcome.index.feature4'),
+                  ]
+                each feature in features
+                  li.list-group-item
+                    .custom-control.custom-checkbox
+                      input.custom-control-input(type='checkbox', id='customCheck2', disabled='', checked='')
+                      label.custom-control-label(for='customCheck2')= feature

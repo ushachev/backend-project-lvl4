@@ -1,0 +1,16 @@
+extends ../layouts/unauthenticated.pug
+
+block content
+  .row.position-relative.mb-n5(style='z-index: 1;')
+    .col-auto.mx-auto
+      .bg-dark
+        .card.border-0
+          .card-body
+            h1.card-title= t('views.session.new.title')
+  .row
+    .col-5.mx-auto.bg-dark
+      form.p-5.mt-3(action=route('session'), method='post')
+        fieldset.mb-4
+          +input('email', `${t('views.session.new.email')}*`, 'mail', values)(type='email')
+          +input('password', `${t('views.session.new.password')}*`, 'key')(type='password')
+        +submit(t('views.session.new.submit'))(class='btn-block')

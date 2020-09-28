@@ -1,0 +1,43 @@
+extends ../layouts/application.pug
+
+block content
+  .row.justify-content-center.mt-3
+    - const currentUser = reply.request.currentUser;
+    .col-auto.text-right
+      .list-group(role='tablist')
+        .list-group-item
+          p.lead= t('views.users.edit.account')
+            span.d-block= currentUser.email
+        a.list-group-item.list-group-item-action(data-toggle='list', href='#profile', role='tab', class= !activePasswordBlock && 'active')= t('views.users.edit.profile')
+        a.list-group-item.list-group-item-action(data-toggle='list', href='#changePassword', role='tab', class= activePasswordBlock && 'active')= t('views.users.edit.password')
+        button.list-group-item.list-group-item-action.text-danger(type='button', data-toggle='modal', data-target='#deleteAccountModal')= t('views.users.edit.deleteAcc')
+    .col-4.py-3.border.border-dark
+      .tab-content
+        .tab-pane(id='profile', role='tabpanel', class= !activePasswordBlock && 'active')
+          form(action=route('userProfile'), method='post')
+            +overrideInput('patch')
+            fieldset.mb-4
+              +input('firstName', t('views.users.edit.firstName'), null, values || currentUser, errors)(type='text')
+              +input('lastName', t('views.users.edit.lastName'), null, values || currentUser, errors)(type='text')
+            +submit(t('views.users.edit.submit'))
+        .tab-pane(id='changePassword', role='tabpanel', class= activePasswordBlock && 'active')
+          form(action=route('userPassword'), method='post')
+            +overrideInput('patch')
+            fieldset.mb-4
+              +input('currentPassword', t('views.users.edit.oldPassword'), null, {}, errors)(type='password')
+              +input('password', t('views.users.edit.newPassword'), null, {}, errors)(type='password')
+              +input('repeatedPassword', t('views.users.edit.repeatNewPassword'), null, {}, errors)(type='password')
+            +submit(t('views.users.edit.submit'))
+  .modal.fade(id='deleteAccountModal', tabindex='-1', aria-labelledby='deleteAccountModalLabel', aria-hidden='true')
+    .modal-dialog
+      .modal-content
+        .modal-header
+          h5.modal-title(id='exampleModalLabel')= t('views.users.edit.deletionAcc')
+          button.close(type='button', data-dismiss='modal', aria-label='Close')
+            span(aria-hidden='true') &times;
+        .modal-body
+          .text-center= t('views.users.edit.deletionWarning')
+        .modal-footer
+          form(action=route('userAccount'), method='post')
+            +overrideInput('delete')
+            +submit(t('views.users.edit.submitDel'))(class='btn-danger')

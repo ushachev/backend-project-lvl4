@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 
 import { fileURLToPath } from 'url';
-import { dirname, join, basename } from 'path';
+import { dirname, join } from 'path';
 import fs from 'fs';
 import fastify from 'fastify';
 import autoLoad from 'fastify-autoload';
@@ -14,6 +14,9 @@ import fastifySecureSession from 'fastify-secure-session';
 import fastifyFlash from 'fastify-flash';
 import fastifyMethodOverride from 'fastify-method-override';
 import fastifyObjectionjs from 'fastify-objectionjs';
+import i18next from 'i18next';
+import i18nextMiddleware from 'i18next-http-middleware';
+import ru from './locales/ru.js';
 
 import knexConfig from '../knexfile.js';
 import models from './models/index.js';
@@ -26,8 +29,20 @@ const mode = process.env.NODE_ENV || 'development';
 const isDevelopment = mode === 'development';
 const isTest = mode === 'test';
 
+const setupLocalization = () => {
+  i18next.init({
+    lng: 'ru',
+    fallbackLng: false,
+    debug: isDevelopment,
+    resources: {
+      ru,
+    },
+  });
+};
+
 const registerPlugins = (app) => {
   app
+    .register(i18nextMiddleware.plugin, { i18next })
     .register(fastifyReverseRoutes.plugin)
     .register(fastifyFormbody)
     .register(fastifySecureSession, {
@@ -61,7 +76,7 @@ const setUpViews = (app) => {
   });
 
   app.decorateReply('render', function render(viewPath, locals) {
-    this.view(viewPath, { ...locals, reply: this, activeNavItem: basename(viewPath) });
+    this.view(viewPath, { ...locals, reply: this });
   });
 };
 
@@ -91,6 +106,8 @@ export default () => {
     base: null,
   };
   const app = fastify({ logger });
+
+  setupLocalization();
 
   registerPlugins(app);
   setUpViews(app);

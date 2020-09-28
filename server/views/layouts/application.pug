@@ -1,8 +1,10 @@
 include ../mixins/forms.pug
 include ../mixins/components.pug
 
+- const t = reply.request.t;
+
 doctype html
-html
+html(lang="ru")
   head
     meta(charset='utf-8')
     meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
@@ -21,26 +23,27 @@ html
               span.navbar-toggler-icon
           #navbarNav.collapse.navbar-collapse.align-self-start.w-100.mt-3
             ul.navbar-nav.flex-column.text-nowrap.align-self-stretch.border-top.border-secondary.pt-3
-              li.nav-item(class=(activeNavItem === 'users' && 'active'))
+              - const { url } = reply.request;
+              li.nav-item(class=(url === route('users') && 'active'))
                 a.nav-link(href=route('users'))
                   +icon('users')
-                  span.pl-2 пользователи
-              li.nav-item(class=(activeNavItem === '' && 'active'))
+                  span.pl-2= t('layouts.application.users')
+              li.nav-item(class='')
                 a.nav-link(href='#')
                   +icon('list-check')
-                  span.pl-2 задачи
-              li.nav-item(class=(activeNavItem === 'taskStatuses' && 'active'))
+                  span.pl-2= t('layouts.application.tasks')
+              li.nav-item(class=(url === route('taskStatuses') && 'active'))
                 a.nav-link(href=route('taskStatuses'))
                   +icon('checks')
-                  span.pl-2 статусы
-              li.nav-item.mb-2(class=(activeNavItem === '' && 'active'))
+                  span.pl-2= t('layouts.application.taskStatuses')
+              li.nav-item.mb-2(class='')
                 a.nav-link(href='#')
                   +icon('tag')
-                  span.pl-2 метки
-              li.nav-item.mt-auto.border-top.border-secondary(class=(activeNavItem === '' && 'active'))
+                  span.pl-2= t('layouts.application.tags')
+              li.nav-item.mt-auto.border-top.border-secondary(class='')
                 a.nav-link.text-lg-center(href='#')
                   +icon('urgent')
-                  span.pl-2 срочно!
+                  span.pl-2= t('layouts.application.urgently')
 
       main.container-fluid
         .fixed-bottom.ml-5.mr-5.mb-5.pb-5
@@ -56,17 +59,17 @@ html
           - const { firstName, lastName } = reply.request.currentUser;
           .dropdowm.text-right
             a.dropdown-toggle.text-reset.text-decoration-none(data-toggle='dropdown', href='#', role='button', id='dropdownMenuLink', aria-haspopup='true', aria-expanded='false', data-offset='20, 20')
-              span приветствуем, #{firstName} #{lastName}
+              span= t('layouts.application.greeting', { firstName, lastName })
             .dropdown-menu.dropdown-menu-right(aria-labelledby='dropdownMenuLink')
               a.dropdown-item(href=route('userAccount'))
                 +icon('user')
-                span.pl-2 аккаунт
+                span.pl-2= t('layouts.application.account')
               .dropdown-divider
               form(id='signOut', action=route('session'), method='post')
                 +overrideInput('delete')
               button.dropdown-item.ml-1(form='signOut', type='submit')
                 +icon('logout')
-                span.pl-2 выйти
+                span.pl-2= t('layouts.application.signOut')
 
         .container-fluid
           .row.justify-content-around.my-3
@@ -86,9 +89,9 @@ html
         .col-auto
           a.text-secondary.mr-3(href='https://github.com/ushachev/backend-project-lvl4', target='_blank')
             +icon('brand-github')
-            span.ml-2 код проекта
+            span.ml-2= t('layouts.application.projectCode')
         .col-auto
-          copy ushachev, 2020
+          copy= t('layouts.application.author')
 
     script(src='https://code.jquery.com/jquery-3.5.1.slim.min.js', integrity='sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj', crossorigin='anonymous')
     script(src=assetPath('bootstrap.bundle.min.js'))
