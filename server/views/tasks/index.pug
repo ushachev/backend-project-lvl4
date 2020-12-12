@@ -1,0 +1,39 @@
+extends ../layouts/application.pug
+
+block content
+  .row.mb-2
+    .col
+      a(href=route('newTask'))
+        +icon('circle-plus')
+        span.ml-2= t('views.tasks.index.create')
+  if tasks.length > 0
+    .row
+      .col
+        table.table.table-striped.table-hover
+          thead
+            tr
+              th= t('views.tasks.index.id')
+              th= t('views.tasks.index.name')
+              th= t('views.tasks.index.status')
+              th= t('views.tasks.index.author')
+              th= t('views.tasks.index.executor')
+              th= t('views.tasks.index.createdAt')
+              th
+          tbody
+            each task in tasks
+              tr
+                td= task.id
+                td
+                  a(href=`/tasks/${task.id}`)
+                    span= task.name
+                td= task.status
+                td= task.creator
+                td= task.executor || t('views.tasks.index.notAssigned')
+                td= formatDate(task.createdAt)
+                td.text-right
+                  a(href=`/tasks/${task.id}/edit`, data-toggle='tooltip', data-placement='auto', title=t('views.tasks.index.change'))
+                    +icon('pencil')
+  else
+    .row
+      .col
+        p.pt-3.border-top.border-secondary.text-center= t('views.tasks.index.empty')

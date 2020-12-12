@@ -7,10 +7,11 @@ const errorKeywordMapping = {
   unique: () => 'это значение уже используется',
   equality: () => 'должно совпадать с паролем',
   wrongPassword: () => 'неверный пароль',
+  minimum: () => 'поле не должно быть пустым',
 };
 
 export default (app) => ({
-  assetPath: (filename) => `/assets/${filename}`,
+  getAssetPath: (filename) => `/assets/${filename}`,
   route: (name) => app.reverse(name),
   getInputErrorMessage: (errors) => errors
     .map(({ message, keyword, params }) => (errorKeywordMapping[keyword]

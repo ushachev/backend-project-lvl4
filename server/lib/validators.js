@@ -2,8 +2,8 @@ import objection from 'objection';
 
 const { ValidationError } = objection;
 
-const validationErrors = {
-  password: new ValidationError({
+const validationErrorBodies = {
+  password: {
     type: 'ModelValidation',
     message: 'validation error: wrong password value',
     data: {
@@ -13,8 +13,8 @@ const validationErrors = {
         params: null,
       }],
     },
-  }),
-  repeatedPassword: new ValidationError({
+  },
+  repeatedPassword: {
     type: 'ModelValidation',
     message: 'validation error: repeatedPassword should be equal to password',
     data: {
@@ -24,11 +24,11 @@ const validationErrors = {
         params: null,
       }],
     },
-  }),
+  },
 };
 
-export default (type) => (validationCondition) => {
+export default (kind) => (validationCondition) => {
   if (!validationCondition) {
-    throw validationErrors[type];
+    throw new ValidationError(validationErrorBodies[kind]);
   }
 };

@@ -5,6 +5,7 @@ import { dirname, join } from 'path';
 import fs from 'fs';
 import fastify from 'fastify';
 import autoLoad from 'fastify-autoload';
+import fastifyErrorPage from 'fastify-error-page';
 import pointOfView from 'point-of-view';
 import pug from 'pug';
 import fastifyStatic from 'fastify-static';
@@ -33,7 +34,7 @@ const setupLocalization = () => {
   i18next.init({
     lng: 'ru',
     fallbackLng: false,
-    debug: isDevelopment,
+    // debug: isDevelopment,
     resources: {
       ru,
     },
@@ -41,6 +42,9 @@ const setupLocalization = () => {
 };
 
 const registerPlugins = (app) => {
+  if (isDevelopment) {
+    app.register(fastifyErrorPage);
+  }
   app
     .register(i18nextMiddleware.plugin, { i18next })
     .register(fastifyReverseRoutes.plugin)

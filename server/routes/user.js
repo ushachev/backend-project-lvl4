@@ -1,6 +1,6 @@
 import { requireSignedIn } from '../lib/preHandlers.js';
 import getValidator from '../lib/validators.js';
-import encrypt from '../lib/secure.js';
+import encrypt from '../lib/secure.cjs';
 
 export default async (app) => {
   app

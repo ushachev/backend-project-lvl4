@@ -1,0 +1,40 @@
+extends ../layouts/application.pug
+
+block content
+  .row
+    .col-4.text-right
+      .h4.pr-3= t('views.tasks.show.title')
+  .row.mt-3
+    .col-4.text-right
+      ul.list-group.list-group-flush
+        li.list-group-item.active
+          p.lead= task.name
+        li.list-group-item= `${t('views.tasks.show.author')}: `
+          span= task.creator
+        li.list-group-item= `${t('views.tasks.show.executor')}: `
+          span= task.executor || t('views.tasks.show.notAssigned')
+        li.list-group-item= `${t('views.tasks.show.status')}: `
+          span= task.status
+        li.list-group-item= `${t('views.tasks.show.createdAt')}: `
+          span= task.createdAt
+        a.list-group-item.list-group-item-action.text-success(href=`/tasks/${task.id}/edit`)= t('views.tasks.show.change')
+        button.list-group-item.list-group-item-action.text-danger(type='button', data-toggle='modal', data-target='#deleteTaskModal')= t('views.tasks.show.deleteTask')
+    .col-8.border-left.border-dark
+      ul.list-group.list-group-flush
+        li.list-group-item
+          p.lead= `${t('views.tasks.show.description')}: `
+        li.list-group-item.border-bottom.border-dark
+          p= task.description
+  .modal.fade(id='deleteTaskModal', tabindex='-1', aria-labelledby='deleteTaskModalLabel', aria-hidden='true')
+    .modal-dialog
+      .modal-content
+        .modal-header
+          h5.modal-title= t('views.tasks.show.deletionTask')
+          button.close(type='button', data-dismiss='modal', aria-label='Close')
+            span(aria-hidden='true') &times;
+        .modal-body
+          .text-center= t('views.tasks.show.deletionWarning')
+        .modal-footer
+          form(action=`/tasks/${task.id}`, method='post')
+            +overrideInput('delete')
+            +submit(t('views.tasks.show.submitDel'))(class='btn-danger')

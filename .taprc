@@ -1,3 +1,4 @@
+test-ignore: test/testHelpers/*.*
 coverage-report:
   - text
   - lcov

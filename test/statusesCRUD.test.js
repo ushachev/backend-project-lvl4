@@ -3,6 +3,7 @@ import casual from 'casual';
 import formAutoContent from 'form-auto-content';
 import { merge } from 'lodash';
 import getApp from '../server/index.js';
+import { addFakeUser, authenticateUser } from './testHelpers/authentication.js';
 
 tap.test('statuses CRUD test', async (subTest) => {
   const { test } = subTest;
@@ -13,78 +14,39 @@ tap.test('statuses CRUD test', async (subTest) => {
   await app.ready();
   await app.objection.knex.migrate.latest();
 
-  const emailValue = casual.email;
-  const passwordValue = casual.password;
+  const cookie = await authenticateUser(app, await addFakeUser(app));
 
-  await app.inject({
-    method: 'POST',
-    url: '/users',
-    ...formAutoContent({
-      firstName: casual.first_name,
-      lastName: casual.last_name,
-      email: emailValue,
-      password: passwordValue,
-      repeatedPassword: passwordValue,
-    }),
-  });
-
-  const { headers: { 'set-cookie': cookie } } = await app.inject({
-    method: 'POST',
-    url: '/session',
-    ...formAutoContent({
-      email: emailValue,
-      password: passwordValue,
-    }),
-  });
-
-  test('GET /taskStatuses availability w/o signing in:', async (t) => {
-    const response = await app.inject({
+  const statusRoutes = [
+    {
       method: 'GET',
       url: '/taskStatuses',
-    });
-    t.equal(response.statusCode, 302, 'a status code of 302 returned');
-    const location = app.reverse('root');
-    t.equal(response.headers.location, location, `and redirected to '${location}'`);
-  });
-
-  test('GET /taskStatuses/1/edit availability w/o signing in:', async (t) => {
-    const response = await app.inject({
+    },
+    {
       method: 'GET',
       url: '/taskStatuses/1/edit',
-    });
-    t.equal(response.statusCode, 302, 'a status code of 302 returned');
-    const location = app.reverse('root');
-    t.equal(response.headers.location, location, `and redirected to '${location}'`);
-  });
-
-  test('POST /taskStatuses w/o signing in:', async (t) => {
-    const response = await app.inject({
+    },
+    {
       method: 'POST',
       url: '/taskStatuses',
-    });
-    t.equal(response.statusCode, 302, 'a status code of 302 returned');
-    const location = app.reverse('root');
-    t.equal(response.headers.location, location, `and redirected to '${location}'`);
-  });
-
-  test('PATCH /taskStatuses/1 w/o signing in:', async (t) => {
-    const response = await app.inject({
+    },
+    {
       method: 'PATCH',
       url: '/taskStatuses/1',
-    });
-    t.equal(response.statusCode, 302, 'a status code of 302 returned');
-    const location = app.reverse('root');
-    t.equal(response.headers.location, location, `and redirected to '${location}'`);
-  });
-
-  test('DELETE /taskStatuses/1 w/o signing in:', async (t) => {
-    const response = await app.inject({
+    },
+    {
       method: 'DELETE',
       url: '/taskStatuses/1',
+    },
+  ];
+
+  statusRoutes.forEach((route) => {
+    test(`${route.method} ${route.url} availability w/o signing in:`, async (t) => {
+      const location = app.reverse('root');
+      const response = await app.inject(route);
+
+      t.equal(response.statusCode, 302, 'a status code of 302 returned');
+      t.equal(response.headers.location, location, `and redirected to '${location}'`);
     });
-    t.equal(response.statusCode, 302, 'a status code of 302 returned');
-    const location = app.reverse('root');
-    t.equal(response.headers.location, location, `and redirected to '${location}'`);
   });
 
   test('CRUD flow with signing in:', async (t) => {
@@ -136,7 +98,7 @@ tap.test('statuses CRUD test', async (subTest) => {
     t.equal(deleteStatusResponse.headers.location, location, `and redirected to '${location}'`);
   });
 
-  test('POST /taskStatuses with incvalid data', async (t) => {
+  test('POST /taskStatuses with invalid data', async (t) => {
     const response = await app.inject({
       method: 'POST',
       url: '/taskStatuses',

@@ -1,10 +1,9 @@
-import objection from 'objection';
-import objectionUnique from 'objection-unique';
+const { Model } = require('objection');
+const objectionUnique = require('objection-unique');
 
-const { Model } = objection;
 const unique = objectionUnique({ fields: ['name'] });
 
-export default class TaskStatus extends unique(Model) {
+class TaskStatus extends unique(Model) {
   static get tableName() {
     return 'task_statuses';
   }
@@ -19,4 +18,21 @@ export default class TaskStatus extends unique(Model) {
       },
     };
   }
+
+  static get relationMappings() {
+    const Task = require('./Task.js');
+
+    return {
+      task: {
+        relation: Model.HasManyRelation,
+        modelClass: Task,
+        join: {
+          from: 'task_statuses.id',
+          to: 'tasks.statusId',
+        },
+      },
+    };
+  }
 }
+
+module.exports = TaskStatus;

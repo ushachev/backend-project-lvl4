@@ -38,3 +38,7 @@ block content
                     +overrideInput('delete')
                     button.btn.btn-link.py-0(type='submit', data-toggle='tooltip', data-placement='auto', title=t('views.taskStatuses.index.delete'))
                       +icon('x')
+  else
+    .row
+      .col
+        p.pt-3.border-top.border-secondary.text-center= t('views.taskStatuses.index.empty')

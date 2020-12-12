@@ -1,0 +1,9 @@
+extends ../layouts/application.pug
+
+block content
+  .row.justify-content-center.mb-2
+    .col.col-sm-8
+      .h4.text-center= t('views.tasks.new.title')
+      form(action=route('tasks'), method='post')
+        include _form.pug
+        +submit(t('views.tasks.new.submit'))(class='btn-block')

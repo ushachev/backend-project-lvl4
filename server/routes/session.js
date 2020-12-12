@@ -1,5 +1,5 @@
 import { requireSignedOut } from '../lib/preHandlers.js';
-import encrypt from '../lib/secure.js';
+import encrypt from '../lib/secure.cjs';
 
 export default async (app) => {
   app

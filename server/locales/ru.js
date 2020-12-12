@@ -35,6 +35,19 @@ export default {
           success: "статус '{{name}}' удалён",
         },
       },
+      tasks: {
+        create: {
+          success: "задача '{{name}}' успешно создана",
+        },
+        edit: {
+          success: "задача '{{name}}' успешно изменена",
+          error: "не удалось изменить задачу '{{name}}'",
+        },
+        delete: {
+          authorship: 'нельзя удалить задачу, созданную другим пользователем',
+          success: "задача '{{name}}' успешно удалена",
+        },
+      },
     },
     layouts: {
       unauthenticated: {
@@ -118,6 +131,7 @@ export default {
         index: {
           create: 'создать статус',
           submit: 'добавить',
+          empty: 'ещё не создано ни одного статуса',
           id: 'id',
           name: 'нименование',
           createdAt: 'дата создания',
@@ -127,6 +141,50 @@ export default {
         edit: {
           status: 'статус:',
           submit: 'изменить',
+        },
+      },
+      tasks: {
+        index: {
+          create: 'создать задачу',
+          empty: 'ещё не создано ни одной задачи',
+          id: 'id',
+          name: 'нименование',
+          status: 'статус',
+          author: 'автор',
+          executor: 'исполнитель',
+          createdAt: 'дата создания',
+          notAssigned: 'не назначен',
+          change: 'изменить',
+          delete: 'удалить',
+        },
+        new: {
+          title: 'новая задача',
+          submit: 'создать',
+        },
+        _form: {
+          name: 'наименование',
+          description: 'описание',
+          executor: 'исполнитель',
+          status: 'статус',
+          tags: 'метки',
+        },
+        edit: {
+          title: 'изменение задачи',
+          submit: 'изменить',
+        },
+        show: {
+          title: 'задача',
+          author: 'автор',
+          executor: 'исполнитель',
+          notAssigned: 'не назначен',
+          status: 'статус',
+          createdAt: 'создана',
+          change: 'изменить задачу',
+          deleteTask: 'удалить задачу',
+          description: 'описание',
+          deletionTask: 'удаление задачи',
+          deletionWarning: 'внимание! задача будет удалена',
+          submitDel: 'удалить',
         },
       },
     },

@@ -10,16 +10,27 @@ export default {
     connection: {
       filename: './dev.sqlite3',
     },
+    pool: {
+      afterCreate(conn, done) {
+        conn.run('PRAGMA foreign_keys = ON', done);
+      },
+    },
     migrations,
   },
   test: {
     client: 'sqlite3',
     connection: ':memory:',
+    pool: {
+      afterCreate(conn, done) {
+        conn.run('PRAGMA foreign_keys = ON', done);
+      },
+    },
     migrations,
   },
   production: {
     client: 'pg',
-    connection: `${process.env.DATABASE_URL}?sslmode=require`,
+    connection: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false },
     migrations,
   },
 };
