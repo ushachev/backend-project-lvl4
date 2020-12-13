@@ -4,6 +4,33 @@ import { requireSignedIn } from '../lib/preHandlers.js';
 const { raw } = objection;
 
 export default async (app) => {
+  const getTaskReadyForView = async (id) => {
+    const task = await app.objection.models.task.query().findById(id)
+      .select(
+        { id: 'tasks.id' },
+        { name: 'tasks.name' },
+        { description: 'tasks.description' },
+        { status: 'status.name' },
+        { creatorId: 'tasks.creatorId' },
+        { creator: raw('?? || ? || ??', 'creator.firstName', ' ', 'creator.lastName') },
+        { executor: raw('?? || ? || ??', 'executor.firstName', ' ', 'executor.lastName') },
+        { createdAt: 'tasks.createdAt' },
+      )
+      .leftJoinRelated('[status, creator, executor]');
+
+    return task;
+  };
+
+  const getTaskRelatedData = async () => {
+    const users = await app.objection.models.user.query().select(
+      { id: 'users.id' },
+      { fullName: raw('?? || ? || ??', 'users.firstName', ' ', 'users.lastName') },
+    );
+    const taskStatuses = await app.objection.models.taskStatus.query();
+
+    return { users, taskStatuses };
+  };
+
   app
     .get('/tasks', { name: 'tasks', preHandler: requireSignedIn }, async (request, reply) => {
       const tasks = await app.objection.models.task.query()
@@ -11,8 +38,8 @@ export default async (app) => {
           { id: 'tasks.id' },
           { name: 'tasks.name' },
           { status: 'status.name' },
-          { creator: raw('?? || " " || ??', 'creator.firstName', 'creator.lastName') },
-          { executor: raw('?? || " " || ??', 'executor.firstName', 'executor.lastName') },
+          { creator: raw('?? || ? || ??', 'creator.firstName', ' ', 'creator.lastName') },
+          { executor: raw('?? || ? || ??', 'executor.firstName', ' ', 'executor.lastName') },
           { createdAt: 'tasks.createdAt' },
         )
         .leftJoinRelated('[status, creator, executor]');
@@ -21,44 +48,21 @@ export default async (app) => {
       return reply;
     })
     .get('/tasks/:id', { preHandler: requireSignedIn }, async (request, reply) => {
-      const task = await app.objection.models.task.query().findById(request.params.id)
-        .select(
-          { id: 'tasks.id' },
-          { name: 'tasks.name' },
-          { description: 'tasks.description' },
-          { status: 'status.name' },
-          { statusId: 'status.id' },
-          { creator: raw('?? || " " || ??', 'creator.firstName', 'creator.lastName') },
-          { executor: raw('?? || " " || ??', 'executor.firstName', 'executor.lastName') },
-          { createdAt: 'tasks.createdAt' },
-        )
-        .leftJoinRelated('[status, creator, executor]');
+      const task = await getTaskReadyForView(request.params.id);
       reply.render('tasks/show', { task });
 
       return reply;
     })
     .get('/tasks/new', { name: 'newTask', preHandler: requireSignedIn }, async (request, reply) => {
-      const users = await app.objection.models.user.query().select(
-        { id: 'users.id' },
-        { fullName: raw('?? || " " || ??', 'users.firstName', 'users.lastName') },
-      );
-      const taskStatuses = await app.objection.models.taskStatus.query();
-      reply.render('tasks/new', {
-        users, taskStatuses, values: {}, errors: {},
-      });
+      const taskRelatedData = await getTaskRelatedData();
+      reply.render('tasks/new', { ...taskRelatedData, values: {}, errors: {} });
 
       return reply;
     })
     .get('/tasks/:id/edit', { preHandler: requireSignedIn }, async (request, reply) => {
       const task = await app.objection.models.task.query().findById(request.params.id);
-      const users = await app.objection.models.user.query().select(
-        { id: 'users.id' },
-        { fullName: raw('?? || " " || ??', 'users.firstName', 'users.lastName') },
-      );
-      const taskStatuses = await app.objection.models.taskStatus.query();
-      reply.render('tasks/edit', {
-        values: task, users, taskStatuses, errors: {},
-      });
+      const taskRelatedData = await getTaskRelatedData();
+      reply.render('tasks/edit', { ...taskRelatedData, values: task, errors: {} });
 
       return reply;
     })
@@ -82,18 +86,9 @@ export default async (app) => {
         if (error.type !== 'ModelValidation') {
           throw error;
         }
-        const users = await app.objection.models.user.query().select(
-          { id: 'users.id' },
-          { fullName: raw('?? || " " || ??', 'users.firstName', 'users.lastName') },
-        );
-        const taskStatuses = await app.objection.models.taskStatus.query();
-
-        reply.code(422).render('tasks/new', {
-          users,
-          taskStatuses,
-          values: request.body,
-          errors: error.data,
-        });
+        const taskRelatedData = await getTaskRelatedData();
+        reply.code(422)
+          .render('tasks/new', { ...taskRelatedData, values: request.body, errors: error.data });
 
         return reply;
       }
@@ -118,16 +113,11 @@ export default async (app) => {
         if (error.type !== 'ModelValidation') {
           throw error;
         }
-        const users = await app.objection.models.user.query().select(
-          { id: 'users.id' },
-          { fullName: raw('?? || " " || ??', 'users.firstName', 'users.lastName') },
-        );
-        const taskStatuses = await app.objection.models.taskStatus.query();
+        const taskRelatedData = await getTaskRelatedData();
 
         request.flash('danger', request.t('flash.tasks.edit.error', { name: task.name }));
         reply.code(422).render('tasks/edit', {
-          users,
-          taskStatuses,
+          ...taskRelatedData,
           values: { id: task.id, ...request.body },
           errors: error.data,
         });
@@ -136,18 +126,7 @@ export default async (app) => {
       }
     })
     .delete('/tasks/:id', { preHandler: requireSignedIn }, async (request, reply) => {
-      const task = await app.objection.models.task.query().findById(request.params.id)
-        .select(
-          { id: 'tasks.id' },
-          { name: 'tasks.name' },
-          { description: 'tasks.description' },
-          { creatorId: 'tasks.creatorId' },
-          { status: 'status.name' },
-          { creator: raw('?? || " " || ??', 'creator.firstName', 'creator.lastName') },
-          { executor: raw('?? || " " || ??', 'executor.firstName', 'executor.lastName') },
-          { createdAt: 'tasks.createdAt' },
-        )
-        .leftJoinRelated('[status, creator, executor]');
+      const task = await getTaskReadyForView(request.params.id);
 
       if (task.creatorId !== request.currentUser.id) {
         request.flash('danger', request.t('flash.tasks.delete.authorship'));
