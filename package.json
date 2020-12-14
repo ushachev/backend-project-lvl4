@@ -8,7 +8,7 @@
   "scripts": {
     "test": "NODE_ENV=test tap",
     "build-configs": "babel knexfile.js --out-dir dist",
-    "build-server": "npm run build-configs && NODE_ENV=production babel server --out-dir dist/server --source-maps inline && cp -r server/views dist/server/views",
+    "build-server": "npm run build-configs && NODE_ENV=production babel server --out-dir dist/server --source-maps inline && cp -r server/views dist/server/views && cp secret-key dist",
     "build": "rm -rf dist && npm run build-server && NODE_ENV=production knex --esm migrate:latest",
     "start": "NODE_ENV=production node dist/server/bin/server.js"
   },
