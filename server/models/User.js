@@ -1,61 +1,10 @@
-// import objectionUnique from 'objection-unique';
-// import BaseModel from './BaseModel.js';
-// import encrypt from '../lib/secure.js';
-
-// const unique = objectionUnique({ fields: ['email'] });
-
-// export default class User extends unique(BaseModel) {
-//   static get tableName() {
-//     return 'users';
-//   }
-
-//   static get jsonSchema() {
-//     return {
-//       type: 'object',
-//       required: ['firstName', 'lastName', 'email', 'password'],
-//       properties: {
-//         id: { type: 'integer' },
-//         firstName: { type: 'string', minLength: 1 },
-//         lastName: { type: 'string', minLength: 1 },
-//         email: { type: 'string', format: 'email' },
-//         password: { type: 'string', minLength: 3 },
-//       },
-//     };
-//   }
-
-//   set password(value) {
-//     this.passwordDigest = encrypt(value);
-//   }
-
-//   static get relationMappings() {
-//     return {
-//       createdTask: {
-//         relation: BaseModel.HasManyRelation,
-//         modelClass: 'Task',
-//         join: {
-//           from: 'users.id',
-//           to: 'tasks.creatorId',
-//         },
-//       },
-//       executedTask: {
-//         relation: BaseModel.HasManyRelation,
-//         modelClass: 'Task',
-//         join: {
-//           from: 'users.id',
-//           to: 'tasks.executorId',
-//         },
-//       },
-//     };
-//   }
-// }
-
-const { Model } = require('objection');
-const objectionUnique = require('objection-unique');
-const encrypt = require('../lib/secure.cjs');
+import objectionUnique from 'objection-unique';
+import BaseModel from './BaseModel.js';
+import encrypt from '../lib/secure.js';
 
 const unique = objectionUnique({ fields: ['email'] });
 
-class User extends unique(Model) {
+export default class User extends unique(BaseModel) {
   static get tableName() {
     return 'users';
   }
@@ -79,20 +28,18 @@ class User extends unique(Model) {
   }
 
   static get relationMappings() {
-    const Task = require('./Task.js');
-
     return {
       createdTask: {
-        relation: Model.HasManyRelation,
-        modelClass: Task,
+        relation: BaseModel.HasManyRelation,
+        modelClass: 'Task',
         join: {
           from: 'users.id',
           to: 'tasks.creatorId',
         },
       },
       executedTask: {
-        relation: Model.HasManyRelation,
-        modelClass: Task,
+        relation: BaseModel.HasManyRelation,
+        modelClass: 'Task',
         join: {
           from: 'users.id',
           to: 'tasks.executorId',
@@ -101,5 +48,3 @@ class User extends unique(Model) {
     };
   }
 }
-
-module.exports = User;

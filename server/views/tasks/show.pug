@@ -16,7 +16,7 @@ block content
         li.list-group-item= `${t('views.tasks.show.status')}: `
           span= task.status
         li.list-group-item= `${t('views.tasks.show.createdAt')}: `
-          span= task.createdAt
+          span= formatDate(task.createdAt)
         a.list-group-item.list-group-item-action.text-success(href=`/tasks/${task.id}/edit`)= t('views.tasks.show.change')
         button.list-group-item.list-group-item-action.text-danger(type='button', data-toggle='modal', data-target='#deleteTaskModal')= t('views.tasks.show.deleteTask')
     .col-8.border-left.border-dark

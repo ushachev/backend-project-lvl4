@@ -5,7 +5,7 @@ start:
 	heroku local -f Procfile.dev
 
 start-backend:
-	npx nodemon server/bin/server.js
+	npx nodemon --exec npx babel-node server/bin/server.js
 
 start-frontend:
 	npx webpack-dev-server --config webpack.config.cjs

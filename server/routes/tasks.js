@@ -31,6 +31,13 @@ export default async (app) => {
     return { users, taskStatuses };
   };
 
+  const normalizeTaskData = (data) => ({
+    name: data.name,
+    description: data.description,
+    executorId: Number(data.executorId) || null,
+    statusId: Number(data.statusId),
+  });
+
   app
     .get('/tasks', { name: 'tasks', preHandler: requireSignedIn }, async (request, reply) => {
       const tasks = await app.objection.models.task.query()
@@ -68,16 +75,11 @@ export default async (app) => {
     })
     .post('/tasks', { preHandler: requireSignedIn }, async (request, reply) => {
       try {
-        const taskData = {
-          name: request.body.name,
-          description: request.body.description,
-          executorId: Number(request.body.executorId) || null,
-          statusId: Number(request.body.statusId),
-        };
+        const taskData = normalizeTaskData(request.body);
+
         await app.objection.models.user.relatedQuery('createdTask')
           .for(request.currentUser.id)
           .insert(taskData);
-
         request.flash('info', request.t('flash.tasks.create.success', { name: taskData.name }));
         reply.redirect(app.reverse('tasks'));
 
@@ -97,12 +99,7 @@ export default async (app) => {
       const task = await app.objection.models.task.query().findById(request.params.id);
 
       try {
-        const taskData = {
-          name: request.body.name,
-          description: request.body.description,
-          executorId: Number(request.body.executorId) || null,
-          statusId: Number(request.body.statusId),
-        };
+        const taskData = normalizeTaskData(request.body);
 
         await task.$query().patch(taskData);
         request.flash('info', request.t('flash.tasks.edit.success', { name: taskData.name }));

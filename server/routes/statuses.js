@@ -40,7 +40,7 @@ export default async (app) => {
         return reply;
       } catch ({ data }) {
         request.flash('danger', request.t('flash.taskStatuses.edit.error', { name: taskStatus.name }));
-        reply.code(422).render('taskStatuses/index', { values: request.body, errors: data });
+        reply.code(422).render('taskStatuses/edit', { values: request.body, errors: data });
         return reply;
       }
     })

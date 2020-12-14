@@ -5,13 +5,12 @@
   "engines": {
     "node": "14.x"
   },
-  "type": "module",
   "scripts": {
-    "pretest": "npe type commonjs",
     "test": "NODE_ENV=test tap",
-    "posttest": "npe type module",
-    "build": "NODE_ENV=production knex --esm migrate:latest",
-    "start": "NODE_ENV=production node server/bin/server.js"
+    "build-configs": "babel knexfile.js --out-dir dist",
+    "build-server": "npm run build-configs && NODE_ENV=production babel server --out-dir dist/server --source-maps inline && cp -r server/views dist/server/views",
+    "build": "rm -rf dist && npm run build-server && NODE_ENV=production knex --esm migrate:latest",
+    "start": "NODE_ENV=production node dist/server/bin/server.js"
   },
   "repository": {
     "type": "git",
@@ -28,6 +27,10 @@
   },
   "homepage": "https://github.com/ushachev/backend-project-lvl4#readme",
   "devDependencies": {
+    "@babel/cli": "^7.12.10",
+    "@babel/core": "^7.12.10",
+    "@babel/node": "^7.12.10",
+    "@babel/plugin-transform-modules-commonjs": "^7.12.1",
     "casual": "^1.6.2",
     "copy-webpack-plugin": "^6.0.3",
     "eslint": "^7.6.0",
@@ -36,7 +39,6 @@
     "form-auto-content": "^2.0.0",
     "html-webpack-plugin": "^4.3.0",
     "nodemon": "^2.0.4",
-    "npe": "^1.1.3",
     "pino-pretty": "^4.1.0",
     "pug-loader": "^2.4.0",
     "sqlite3": "^5.0.0",

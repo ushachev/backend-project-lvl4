@@ -1,8 +1,8 @@
-const User = require('./User.js');
-const TaskStatus = require('./TaskStatus.js');
-const Task = require('./Task.js');
+import User from './User.js';
+import TaskStatus from './TaskStatus.js';
+import Task from './Task.js';
 
-module.exports = [
+export default [
   User,
   TaskStatus,
   Task,

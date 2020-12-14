@@ -1,7 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { join } from 'path';
 import fs from 'fs';
 import fastify from 'fastify';
 import autoLoad from 'fastify-autoload';
@@ -22,9 +21,6 @@ import ru from './locales/ru.js';
 import knexConfig from '../knexfile.js';
 import models from './models/index.js';
 import getHelpers from './helpers/index.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 const mode = process.env.NODE_ENV || 'development';
 const isDevelopment = mode === 'development';
