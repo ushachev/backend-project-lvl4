@@ -17,6 +17,7 @@ import fastifyObjectionjs from 'fastify-objectionjs';
 import i18next from 'i18next';
 import i18nextMiddleware from 'i18next-http-middleware';
 import ru from './locales/ru.js';
+import webpackConfig from '../webpack.config.babel.js';
 
 import knexConfig from '../knexfile.js';
 import models from './models/index.js';
@@ -66,13 +67,19 @@ const registerPlugins = (app) => {
 };
 
 const setUpViews = (app) => {
+  const { devServer } = webpackConfig;
   const helpers = getHelpers(app);
+  const devHost = `http://${devServer.host}:${devServer.port}`;
+  const domain = isDevelopment ? devHost : '';
 
   app.register(pointOfView, {
     engine: { pug },
     includeViewExtension: true,
     root: join(__dirname, 'views'),
-    defaultContext: { ...helpers },
+    defaultContext: {
+      ...helpers,
+      getAssetPath: (filename) => `${domain}/assets/${filename}`,
+    },
   });
 
   app.decorateReply('render', function render(viewPath, locals) {

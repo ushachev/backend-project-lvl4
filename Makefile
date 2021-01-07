@@ -8,7 +8,7 @@ start-backend:
 	npx nodemon --exec npx babel-node server/bin/server.js
 
 start-frontend:
-	npx webpack-dev-server --config webpack.config.cjs
+	npx webpack serve
 
 lint:
 	npx eslint .

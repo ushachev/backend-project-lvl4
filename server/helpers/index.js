@@ -11,7 +11,6 @@ const errorKeywordMapping = {
 };
 
 export default (app) => ({
-  getAssetPath: (filename) => `/assets/${filename}`,
   route: (name) => app.reverse(name),
   getInputErrorMessage: (errors) => errors
     .map(({ message, keyword, params }) => (errorKeywordMapping[keyword]

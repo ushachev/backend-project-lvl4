@@ -30,8 +30,8 @@ export default async (app) => {
       const taskStatus = await app.objection.models.taskStatus.query().findById(request.params.id);
 
       try {
-        const { name: newName } = request.body;
-        const { name: oldName } = taskStatus;
+        const newName = request.body.name;
+        const oldName = taskStatus.name;
 
         await taskStatus.$query().patch({ name: newName });
         request.flash('info', request.t('flash.taskStatuses.edit.success', { oldName, newName }));
@@ -40,7 +40,8 @@ export default async (app) => {
         return reply;
       } catch ({ data }) {
         request.flash('danger', request.t('flash.taskStatuses.edit.error', { name: taskStatus.name }));
-        reply.code(422).render('taskStatuses/edit', { values: request.body, errors: data });
+        const values = { id: request.params.id, name: request.body.name };
+        reply.code(422).render('taskStatuses/edit', { values, errors: data });
         return reply;
       }
     })

@@ -8,7 +8,7 @@ html(lang="ru")
   head
     meta(charset='utf-8')
     meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
-    link(href=getAssetPath('bootstrap.min.css'), rel='stylesheet')
+    link(href=getAssetPath('main.css'), rel='stylesheet')
     title Task manager
   body.d-flex.flex-column.vh-100
     nav.navbar.navbar-expand-lg.navbar-dark.bg-dark.m-3.mb-5
@@ -51,5 +51,4 @@ html(lang="ru")
         .col-auto
           copy= t('layouts.application.author')
 
-    script(src='https://code.jquery.com/jquery-3.5.1.slim.min.js', integrity='sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj', crossorigin='anonymous')
-    script(src=getAssetPath('bootstrap.bundle.min.js'))
+    script(src=getAssetPath('main.js'))
