@@ -15,6 +15,7 @@ export default {
         conn.run('PRAGMA foreign_keys = ON', done);
       },
     },
+    useNullAsDefault: true,
     migrations,
   },
   test: {
@@ -25,6 +26,7 @@ export default {
         conn.run('PRAGMA foreign_keys = ON', done);
       },
     },
+    useNullAsDefault: true,
     migrations,
   },
   production: {
@@ -35,6 +37,7 @@ export default {
         rejectUnauthorized: false,
       },
     },
+    useNullAsDefault: true,
     migrations,
   },
 };

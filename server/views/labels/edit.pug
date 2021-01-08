@@ -1,0 +1,15 @@
+extends ../layouts/application.pug
+
+block content
+  .row
+    .col
+      .h4= t('views.labels.edit.status')
+  .row
+    .col
+      form(action=`/labels/${values.id}`, method='post')
+        +overrideInput('patch')
+        .form-row
+          .col-12.col-sm-8
+            +input('name', null, null, values, errors)
+          .col-12.col-sm-4
+            +submit(t('views.labels.edit.submit'))(class='btn-block')

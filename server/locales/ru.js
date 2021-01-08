@@ -48,6 +48,18 @@ export default {
           success: "задача '{{name}}' успешно удалена",
         },
       },
+      labels: {
+        create: {
+          success: "метка '{{name}}' успешно создана",
+        },
+        edit: {
+          success: "значение метки '{{oldName}}' изменено на '{{newName}}'",
+          error: "не удалось изменить метку '{{name}}'",
+        },
+        delete: {
+          success: "метка '{{name}}' удалёна",
+        },
+      },
     },
     layouts: {
       unauthenticated: {
@@ -185,6 +197,22 @@ export default {
           deletionTask: 'удаление задачи',
           deletionWarning: 'внимание! задача будет удалена',
           submitDel: 'удалить',
+        },
+      },
+      labels: {
+        index: {
+          create: 'создать метку',
+          submit: 'добавить',
+          empty: 'ещё не создано ни одной метки',
+          id: 'id',
+          name: 'нименование',
+          createdAt: 'дата создания',
+          change: 'изменить',
+          delete: 'удалить',
+        },
+        edit: {
+          status: 'метка:',
+          submit: 'изменить',
         },
       },
     },

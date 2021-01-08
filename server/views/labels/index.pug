@@ -1,0 +1,44 @@
+extends ../layouts/application.pug
+
+block content
+  .row.mb-2
+    .col
+      button.btn.btn-link(type='button', data-toggle='collapse', data-target='#addingLabel')
+        +icon('circle-plus')
+        span.ml-2= t('views.labels.index.create')
+  .row
+    .col
+      #addingLabel.collapse(class= errors ? 'show' : '')
+        form(action=route('labels'), method='post')
+          .form-row
+            .col-12.col-sm-8
+              +input('name', null, null, values, errors)
+            .col-12.col-sm-4
+              +submit(t('views.labels.index.submit'))(class='btn-block')
+  if labels.length > 0
+    .row
+      .col
+        table.table.table-striped.table-hover
+          thead
+            tr
+              th= t('views.labels.index.id')
+              th= t('views.labels.index.name')
+              th= t('views.labels.index.createdAt')
+              th
+          tbody
+            each label in labels
+              tr
+                td= label.id
+                td= label.name 
+                td= formatDate(label.createdAt)
+                td.text-right
+                  a(href=`/labels/${label.id}/edit`, data-toggle='tooltip', data-placement='auto', title=t('views.labels.index.change'))
+                    +icon('pencil')
+                  form.d-inline(action=`/labels/${label.id}`, method='post')
+                    +overrideInput('delete')
+                    button.btn.btn-link.py-0(type='submit', data-toggle='tooltip', data-placement='auto', title=t('views.labels.index.delete'))
+                      +icon('x')
+  else
+    .row
+      .col
+        p.pt-3.border-top.border-secondary.text-center= t('views.labels.index.empty')
