@@ -24,10 +24,10 @@ export default class Task extends BaseModel {
     return {
       status: {
         relation: BaseModel.BelongsToOneRelation,
-        modelClass: 'TaskStatus',
+        modelClass: 'Status',
         join: {
           from: 'tasks.statusId',
-          to: 'task_statuses.id',
+          to: 'statuses.id',
         },
       },
       creator: {

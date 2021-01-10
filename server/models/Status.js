@@ -5,7 +5,7 @@ const unique = objectionUnique({ fields: ['name'] });
 
 export default class TaskStatus extends unique(BaseModel) {
   static get tableName() {
-    return 'task_statuses';
+    return 'statuses';
   }
 
   static get jsonSchema() {
@@ -25,7 +25,7 @@ export default class TaskStatus extends unique(BaseModel) {
         relation: BaseModel.HasManyRelation,
         modelClass: 'Task',
         join: {
-          from: 'task_statuses.id',
+          from: 'statuses.id',
           to: 'tasks.statusId',
         },
       },

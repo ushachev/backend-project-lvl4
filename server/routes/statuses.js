@@ -2,31 +2,31 @@ import { requireSignedIn } from '../lib/preHandlers.js';
 
 export default async (app) => {
   app
-    .get('/taskStatuses', { name: 'taskStatuses', preHandler: requireSignedIn }, async (request, reply) => {
-      const taskStatuses = await app.objection.models.taskStatus.query();
-      reply.render('taskStatuses/index', { taskStatuses });
+    .get('/statuses', { name: 'statuses', preHandler: requireSignedIn }, async (request, reply) => {
+      const statuses = await app.objection.models.taskStatus.query();
+      reply.render('statuses/index', { statuses });
       return reply;
     })
-    .get('/taskStatuses/:id/edit', { preHandler: requireSignedIn }, async (request, reply) => {
+    .get('/statuses/:id/edit', { preHandler: requireSignedIn }, async (request, reply) => {
       const taskStatus = await app.objection.models.taskStatus.query().findById(request.params.id);
-      reply.render('taskStatuses/edit', { values: taskStatus });
+      reply.render('statuses/edit', { values: taskStatus });
       return reply;
     })
-    .post('/taskStatuses', { preHandler: requireSignedIn }, async (request, reply) => {
+    .post('/statuses', { preHandler: requireSignedIn }, async (request, reply) => {
       try {
         const taskStatus = await app.objection.models.taskStatus.fromJson(request.body);
         await app.objection.models.taskStatus.query().insert(taskStatus);
-        request.flash('info', request.t('flash.taskStatuses.create.success', { ...request.body }));
-        reply.redirect(app.reverse('taskStatuses'));
+        request.flash('info', request.t('flash.statuses.create.success', { ...request.body }));
+        reply.redirect(app.reverse('statuses'));
 
         return reply;
       } catch ({ data }) {
-        const taskStatuses = await app.objection.models.taskStatus.query();
-        reply.code(422).render('taskStatuses/index', { taskStatuses, values: request.body, errors: data });
+        const statuses = await app.objection.models.taskStatus.query();
+        reply.code(422).render('statuses/index', { statuses, values: request.body, errors: data });
         return reply;
       }
     })
-    .patch('/taskStatuses/:id', { preHandler: requireSignedIn }, async (request, reply) => {
+    .patch('/statuses/:id', { preHandler: requireSignedIn }, async (request, reply) => {
       const taskStatus = await app.objection.models.taskStatus.query().findById(request.params.id);
 
       try {
@@ -34,22 +34,22 @@ export default async (app) => {
         const oldName = taskStatus.name;
 
         await taskStatus.$query().patch({ name: newName });
-        request.flash('info', request.t('flash.taskStatuses.edit.success', { oldName, newName }));
-        reply.redirect(app.reverse('taskStatuses'));
+        request.flash('info', request.t('flash.statuses.edit.success', { oldName, newName }));
+        reply.redirect(app.reverse('statuses'));
 
         return reply;
       } catch ({ data }) {
-        request.flash('danger', request.t('flash.taskStatuses.edit.error', { name: taskStatus.name }));
+        request.flash('danger', request.t('flash.statuses.edit.error', { name: taskStatus.name }));
         const values = { id: request.params.id, name: request.body.name };
-        reply.code(422).render('taskStatuses/edit', { values, errors: data });
+        reply.code(422).render('statuses/edit', { values, errors: data });
         return reply;
       }
     })
-    .delete('/taskStatuses/:id', { preHandler: requireSignedIn }, async (request, reply) => {
+    .delete('/statuses/:id', { preHandler: requireSignedIn }, async (request, reply) => {
       const taskStatus = await app.objection.models.taskStatus.query().findById(request.params.id);
       await taskStatus.$query().delete();
-      request.flash('info', request.t('flash.taskStatuses.delete.success', { name: taskStatus.name }));
-      reply.redirect(app.reverse('taskStatuses'));
+      request.flash('info', request.t('flash.statuses.delete.success', { name: taskStatus.name }));
+      reply.redirect(app.reverse('statuses'));
 
       return reply;
     });

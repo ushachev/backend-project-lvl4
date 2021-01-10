@@ -42,10 +42,8 @@
     "form-auto-content": "^2.0.0",
     "nodemon": "^2.0.4",
     "pino-pretty": "^4.1.0",
-    "pug-loader": "^2.4.0",
     "sqlite3": "^5.0.0",
     "tap": "^14.10.8",
-    "webpack": "^5.11.1",
     "webpack-cli": "^4.3.1",
     "webpack-dev-server": "^3.11.1"
   },
@@ -67,7 +65,7 @@
     "i18next": "^19.7.0",
     "i18next-http-middleware": "^3.0.5",
     "jquery": "^3.5.1",
-    "knex": "^0.21.5",
+    "knex": "^0.21.15",
     "lodash": "^4.17.20",
     "mini-css-extract-plugin": "^1.3.3",
     "objection": "^2.2.3",
@@ -75,6 +73,7 @@
     "pg": "^8.3.3",
     "point-of-view": "^4.3.0",
     "pug": "^3.0.0",
-    "rollbar": "^2.19.2"
+    "rollbar": "^2.19.2",
+    "webpack": "^5.11.1"
   }
 }

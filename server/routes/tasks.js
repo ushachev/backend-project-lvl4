@@ -26,9 +26,9 @@ export default async (app) => {
       { id: 'users.id' },
       { fullName: raw('?? || ? || ??', 'users.firstName', ' ', 'users.lastName') },
     );
-    const taskStatuses = await app.objection.models.taskStatus.query();
+    const statuses = await app.objection.models.taskStatus.query();
 
-    return { users, taskStatuses };
+    return { users, statuses };
   };
 
   const normalizeTaskData = (data) => ({

@@ -76,7 +76,7 @@ tap.test('tasks CRUD test', async (subTest) => {
 
     await app.inject({
       method: 'POST',
-      url: '/taskStatuses',
+      url: '/statuses',
       ...merge(formAutoContent({ name: casual.short_description }), { headers: { cookie } }),
     });
     const newTaskResponse = await app.inject({

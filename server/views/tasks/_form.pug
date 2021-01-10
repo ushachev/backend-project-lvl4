@@ -11,12 +11,12 @@
 .form-row.mb-4
   .form-group.col-6
     - const statusErrors = errors['statusId'];
-    label(for='taskStatus')= t('views.tasks._form.status')
-    select.form-control(name='statusId', id='taskStatus', class=statusErrors ? 'is-invalid' : 'border-secondary')
+    label(for='status')= t('views.tasks._form.status')
+    select.form-control(name='statusId', id='status', class=statusErrors ? 'is-invalid' : 'border-secondary')
       if !values.id
         option
-      each taskStatus in taskStatuses
-        option(value= taskStatus.id, selected= (values.statusId === taskStatus.id))= taskStatus.name
+      each status in statuses
+        option(value= status.id, selected= (values.statusId === status.id))= status.name
     if statusErrors
       .invalid-feedback= getInputErrorMessage(statusErrors)
   .form-group.col-6

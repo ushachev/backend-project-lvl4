@@ -1,0 +1,44 @@
+extends ../layouts/application.pug
+
+block content
+  .row.mb-2
+    .col
+      button.btn.btn-link(type='button', data-toggle='collapse', data-target='#addingStatus')
+        +icon('circle-plus')
+        span.ml-2= t('views.statuses.index.create')
+  .row
+    .col
+      #addingStatus.collapse(class= errors ? 'show' : '')
+        form(action=route('statuses'), method='post')
+          .form-row
+            .col-12.col-sm-8
+              +input('name', null, null, values, errors)
+            .col-12.col-sm-4
+              +submit(t('views.statuses.index.submit'))(class='btn-block')
+  if statuses.length > 0
+    .row
+      .col
+        table.table.table-striped.table-hover
+          thead
+            tr
+              th= t('views.statuses.index.id')
+              th= t('views.statuses.index.name')
+              th= t('views.statuses.index.createdAt')
+              th
+          tbody
+            each status in statuses
+              tr
+                td= status.id
+                td= status.name 
+                td= formatDate(status.createdAt)
+                td.text-right
+                  a(href=`/statuses/${status.id}/edit`, data-toggle='tooltip', data-placement='auto', title=t('views.statuses.index.change'))
+                    +icon('pencil')
+                  form.d-inline(action=`/statuses/${status.id}`, method='post')
+                    +overrideInput('delete')
+                    button.btn.btn-link.py-0(type='submit', data-toggle='tooltip', data-placement='auto', title=t('views.statuses.index.delete'))
+                      +icon('x')
+  else
+    .row
+      .col
+        p.pt-3.border-top.border-secondary.text-center= t('views.statuses.index.empty')

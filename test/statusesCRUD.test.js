@@ -19,23 +19,23 @@ tap.test('statuses CRUD test', async (subTest) => {
   const statusRoutes = [
     {
       method: 'GET',
-      url: '/taskStatuses',
+      url: '/statuses',
     },
     {
       method: 'GET',
-      url: '/taskStatuses/1/edit',
+      url: '/statuses/1/edit',
     },
     {
       method: 'POST',
-      url: '/taskStatuses',
+      url: '/statuses',
     },
     {
       method: 'PATCH',
-      url: '/taskStatuses/1',
+      url: '/statuses/1',
     },
     {
       method: 'DELETE',
-      url: '/taskStatuses/1',
+      url: '/statuses/1',
     },
   ];
 
@@ -50,60 +50,60 @@ tap.test('statuses CRUD test', async (subTest) => {
   });
 
   test('CRUD flow with signing in:', async (t) => {
-    const location = app.reverse('taskStatuses');
+    const location = app.reverse('statuses');
 
     const statusesResponse = await app.inject({
       method: 'GET',
-      url: '/taskStatuses',
+      url: '/statuses',
       headers: { cookie },
     });
-    t.equal(statusesResponse.statusCode, 200, 'GET /taskStatuses returns a status code of 200');
+    t.equal(statusesResponse.statusCode, 200, 'GET /statuses returns a status code of 200');
 
     const newStatusResponse = await app.inject({
       method: 'POST',
-      url: '/taskStatuses',
+      url: '/statuses',
       ...merge(formAutoContent({ name: casual.short_description }), { headers: { cookie } }),
     });
-    t.equal(newStatusResponse.statusCode, 302, 'POST /taskStatuses returns a status code of 302');
+    t.equal(newStatusResponse.statusCode, 302, 'POST /statuses returns a status code of 302');
     t.equal(newStatusResponse.headers.location, location, `and redirected to '${location}'`);
 
     const editStatusResponse = await app.inject({
       method: 'GET',
-      url: '/taskStatuses/1/edit',
+      url: '/statuses/1/edit',
       headers: { cookie },
     });
-    t.equal(editStatusResponse.statusCode, 200, 'GET /taskStatuses/1/edit returns a status code of 200');
+    t.equal(editStatusResponse.statusCode, 200, 'GET /statuses/1/edit returns a status code of 200');
 
     const patchStatusResponse = await app.inject({
       method: 'PATCH',
-      url: '/taskStatuses/1',
+      url: '/statuses/1',
       ...merge(formAutoContent({ name: casual.short_description }), { headers: { cookie } }),
     });
-    t.equal(patchStatusResponse.statusCode, 302, 'PATCH /taskStatuses/1 returns a status code of 302');
+    t.equal(patchStatusResponse.statusCode, 302, 'PATCH /statuses/1 returns a status code of 302');
     t.equal(patchStatusResponse.headers.location, location, `and redirected to '${location}'`);
 
     const response = await app.inject({
       method: 'PATCH',
-      url: '/taskStatuses/1',
+      url: '/statuses/1',
       ...merge(formAutoContent({ name: '' }), { headers: { cookie } }),
     });
-    t.equal(response.statusCode, 422, 'PATCH /taskStatuses/1 with invalid data returns a status code of 422');
+    t.equal(response.statusCode, 422, 'PATCH /statuses/1 with invalid data returns a status code of 422');
 
     const deleteStatusResponse = await app.inject({
       method: 'DELETE',
-      url: '/taskStatuses/1',
+      url: '/statuses/1',
       headers: { cookie },
     });
-    t.equal(deleteStatusResponse.statusCode, 302, 'DELETE /taskStatuses/1 returns a status code of 302');
+    t.equal(deleteStatusResponse.statusCode, 302, 'DELETE /statuses/1 returns a status code of 302');
     t.equal(deleteStatusResponse.headers.location, location, `and redirected to '${location}'`);
   });
 
-  test('POST /taskStatuses with invalid data', async (t) => {
+  test('POST /statuses with invalid data', async (t) => {
     const response = await app.inject({
       method: 'POST',
-      url: '/taskStatuses',
+      url: '/statuses',
       ...merge(formAutoContent({ name: '' }), { headers: { cookie } }),
     });
-    t.equal(response.statusCode, 422, 'POST /taskStatuses returns a status code of 422');
+    t.equal(response.statusCode, 422, 'POST /statuses returns a status code of 422');
   });
 });

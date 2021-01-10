@@ -23,7 +23,7 @@ export default {
           success: 'аккаунт {{account}} удалён',
         },
       },
-      taskStatuses: {
+      statuses: {
         create: {
           success: "статус '{{name}}' успешно создан",
         },
@@ -74,7 +74,7 @@ export default {
         signOut: 'выйти',
         users: 'пользователи',
         tasks: 'задачи',
-        taskStatuses: 'статусы',
+        statuses: 'статусы',
         tags: 'метки',
         urgently: 'срочные задачи',
       },
@@ -139,7 +139,7 @@ export default {
           title: 'менеджер задач',
         },
       },
-      taskStatuses: {
+      statuses: {
         index: {
           create: 'создать статус',
           submit: 'добавить',
