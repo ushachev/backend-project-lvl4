@@ -3,7 +3,7 @@ import BaseModel from './BaseModel.js';
 
 const unique = objectionUnique({ fields: ['name'] });
 
-export default class TaskStatus extends unique(BaseModel) {
+export default class Status extends unique(BaseModel) {
   static get tableName() {
     return 'statuses';
   }
@@ -21,7 +21,7 @@ export default class TaskStatus extends unique(BaseModel) {
 
   static get relationMappings() {
     return {
-      task: {
+      tasks: {
         relation: BaseModel.HasManyRelation,
         modelClass: 'Task',
         join: {

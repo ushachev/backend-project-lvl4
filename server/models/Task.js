@@ -46,6 +46,18 @@ export default class Task extends BaseModel {
           to: 'users.id',
         },
       },
+      labels: {
+        relation: BaseModel.ManyToManyRelation,
+        modelClass: 'Label',
+        join: {
+          from: 'tasks.id',
+          through: {
+            from: 'tasks_labels.taskId',
+            to: 'tasks_labels.labelId',
+          },
+          to: 'labels.id',
+        },
+      },
     };
   }
 }

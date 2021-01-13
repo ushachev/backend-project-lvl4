@@ -49,6 +49,7 @@
   },
   "dependencies": {
     "bootstrap": "^4.5.3",
+    "bootstrap-select": "^1.13.18",
     "bootswatch": "^4.5.3",
     "copy-webpack-plugin": "^6.0.3",
     "fastify": "^3.6.0",

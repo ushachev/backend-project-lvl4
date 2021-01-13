@@ -190,6 +190,8 @@ export default {
           executor: 'исполнитель',
           notAssigned: 'не назначен',
           status: 'статус',
+          labels: 'метки',
+          withoutLabels: 'без меток',
           createdAt: 'создана',
           change: 'изменить задачу',
           deleteTask: 'удалить задачу',

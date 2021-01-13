@@ -20,5 +20,7 @@
     if statusErrors
       .invalid-feedback= getInputErrorMessage(statusErrors)
   .form-group.col-6
-    label= t('views.tasks._form.tags')
-    button.btn.btn-outline-dark.btn-block.dropdown-toggle.text-right.text-dark(type='button', style='background-color: #a9bdbd;')
+    label(for='label')= t('views.tasks._form.tags')
+    select.selectpicker.form-control(name='labelIds', id='label', multiple, data-style='text-dark', data-size='4', data-dropup-auto='false', title='метка не выбрана')
+      each label in labels
+        option(value= label.id, selected= values.labelIds.includes(label.id))= label.name

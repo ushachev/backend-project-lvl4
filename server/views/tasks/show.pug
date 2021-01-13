@@ -15,6 +15,12 @@ block content
           span= task.executor || t('views.tasks.show.notAssigned')
         li.list-group-item= `${t('views.tasks.show.status')}: `
           span= task.status
+        li.list-group-item= `${t('views.tasks.show.labels')}:`
+          if task.labelNames.length
+            each labelName in task.labelNames
+              span= ` #${labelName}`
+          else
+            span= ` ${t('views.tasks.show.withoutLabels')}`
         li.list-group-item= `${t('views.tasks.show.createdAt')}: `
           span= formatDate(task.createdAt)
         a.list-group-item.list-group-item-action.text-success(href=`/tasks/${task.id}/edit`)= t('views.tasks.show.change')
@@ -24,7 +30,7 @@ block content
         li.list-group-item
           p.lead= `${t('views.tasks.show.description')}: `
         li.list-group-item.border-bottom.border-dark
-          p= task.description
+          pre= task.description
   .modal.fade(id='deleteTaskModal', tabindex='-1', aria-labelledby='deleteTaskModalLabel', aria-hidden='true')
     .modal-dialog
       .modal-content

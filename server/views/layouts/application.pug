@@ -46,14 +46,16 @@ html(lang="ru")
                   span.pl-2= t('layouts.application.urgently')
 
       main.container-fluid
-        .fixed-bottom.ml-5.mr-5.mb-5.pb-5
-          .row
-            .col-6.ml-auto
-              each messages, type in reply.flash() || []
-                each message in messages
-                  .alert.alert-dismissible.fade.show(class=`alert-${type}`, role='alert')= message
-                    button.close(type='button', data-dismiss='alert', aria-label='Close')
-                      span(aria-hidden='true') &times;
+        - const flashes = reply.flash()
+        if Object.keys(flashes).length
+          .fixed-bottom.ml-5.mr-5.mb-5.pb-5
+            .row
+              .col-6.ml-auto
+                each messages, type in flashes
+                  each message in messages
+                    .alert.alert-dismissible.fade.show(class=`alert-${type}`, role='alert')= message
+                      button.close(type='button', data-dismiss='alert', aria-label='Close')
+                        span(aria-hidden='true') &times;
 
         .bg-dark.p-3.pb-5.mb-n5
           - const { firstName, lastName } = reply.request.currentUser;

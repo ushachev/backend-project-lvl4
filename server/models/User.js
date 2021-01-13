@@ -29,7 +29,7 @@ export default class User extends unique(BaseModel) {
 
   static get relationMappings() {
     return {
-      createdTask: {
+      createdTasks: {
         relation: BaseModel.HasManyRelation,
         modelClass: 'Task',
         join: {
@@ -37,7 +37,7 @@ export default class User extends unique(BaseModel) {
           to: 'tasks.creatorId',
         },
       },
-      executedTask: {
+      executedTasks: {
         relation: BaseModel.HasManyRelation,
         modelClass: 'Task',
         join: {
