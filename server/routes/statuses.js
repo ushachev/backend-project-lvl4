@@ -46,11 +46,23 @@ export default async (app) => {
       }
     })
     .delete('/statuses/:id', { preHandler: requireSignedIn }, async (request, reply) => {
-      const status = await app.objection.models.status.query().findById(request.params.id);
-      await status.$query().delete();
-      request.flash('info', request.t('flash.statuses.delete.success', { name: status.name }));
-      reply.redirect(app.reverse('statuses'));
+      try {
+        const status = await app.objection.models.status.query().findById(request.params.id);
+        await status.$query().delete();
+        request.flash('info', request.t('flash.statuses.delete.success', { name: status.name }));
+        reply.redirect(app.reverse('statuses'));
 
-      return reply;
+        return reply;
+      } catch (error) {
+        if (error.name !== 'ForeignKeyViolationError') {
+          throw error;
+        }
+        const statuses = await app.objection.models.status.query();
+
+        request.flash('danger', request.t('flash.statuses.delete.error'));
+        reply.code(422).render('statuses/index', { statuses });
+
+        return reply;
+      }
     });
 };
