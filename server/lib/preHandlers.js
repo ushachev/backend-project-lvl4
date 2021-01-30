@@ -1,6 +1,6 @@
 export function requireSignedIn(request, reply, done) {
   if (!request.signedIn) {
-    request.flash('danger', 'доступ запрещён, пожалалуйста авторизуйтесь');
+    request.flash('danger', request.t('flash.preHandlers.requireSigned.in'));
     reply.redirect(this.reverse('root'));
   }
   done();
@@ -8,7 +8,7 @@ export function requireSignedIn(request, reply, done) {
 
 export function requireSignedOut(request, reply, done) {
   if (request.signedIn) {
-    request.flash('info', 'для этого действия необходимо выйти из аккаунта');
+    request.flash('info', request.t('flash.preHandlers.requireSigned.out'));
     reply.redirect(this.reverse('root'));
   }
   done();

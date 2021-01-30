@@ -1,5 +1,3 @@
-/* eslint-disable no-underscore-dangle */
-
 import { join } from 'path';
 import fs from 'fs';
 import fastify from 'fastify';

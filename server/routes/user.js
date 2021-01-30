@@ -53,11 +53,22 @@ export default async (app) => {
       },
     )
     .delete('/user', { preHandler: requireSignedIn }, async (request, reply) => {
-      await request.currentUser.$query().delete();
-      request.session.set('userId', null);
-      request.flash('info', request.t('flash.users.delete.success', { account: request.currentUser.email }));
-      reply.redirect(app.reverse('root'));
+      try {
+        await request.currentUser.$query().delete();
+        request.session.set('userId', null);
+        request.flash('info', request.t('flash.users.delete.success', { account: request.currentUser.email }));
+        reply.redirect(app.reverse('root'));
 
-      return reply;
+        return reply;
+      } catch (error) {
+        if (error.name !== 'ForeignKeyViolationError') {
+          throw error;
+        }
+
+        request.flash('danger', request.t('flash.users.delete.error'));
+        reply.code(422).render('users/edit');
+
+        return reply;
+      }
     });
 };

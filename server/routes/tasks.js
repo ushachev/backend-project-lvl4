@@ -153,14 +153,24 @@ export default async (app) => {
         return reply;
       }
 
-      await app.objection.models.task.transaction(async (trx) => {
-        await task.$relatedQuery('labels', trx).unrelate();
-        await task.$query(trx).delete();
-      });
+      try {
+        await app.objection.models.task.transaction(async (trx) => {
+          await task.$relatedQuery('labels', trx).unrelate();
+          await task.$query(trx).delete();
+        });
 
-      request.flash('info', request.t('flash.tasks.delete.success', { name: task.name }));
-      reply.redirect(app.reverse('tasks'));
+        request.flash('info', request.t('flash.tasks.delete.success', { name: task.name }));
+        reply.redirect(app.reverse('tasks'));
 
-      return reply;
+        return reply;
+      } catch (error) {
+        request.rollbar(error);
+
+        const labelNames = labels.map(({ name }) => name);
+        request.flash('danger', request.t('flash.tasks.delete.error', { name: task.name }));
+        reply.code(422).render('tasks/show', { task: { ...task, labelNames } });
+
+        return reply;
+      }
     });
 };

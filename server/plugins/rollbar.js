@@ -8,6 +8,12 @@ const rollbar = new Rollbar({
 });
 
 export default fp(async (app) => {
+  app.decorateRequest('rollbar', function rb(error) {
+    if (process.env.NODE_ENV === 'production') {
+      app.log.error(`Error reporting to rollbar, ignoring: ${error.message}`);
+      rollbar.error(error, this);
+    }
+  });
   app.addHook('onError', async (request, _reply, error) => {
     if (process.env.NODE_ENV === 'production') {
       app.log.error(`Error reporting to rollbar, ignoring: ${error.message}`);
