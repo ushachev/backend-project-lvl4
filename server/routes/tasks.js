@@ -48,6 +48,7 @@ export default async (app) => {
 
   app
     .get('/tasks', { name: 'tasks', preHandler: requireSignedIn }, async (request, reply) => {
+      const taskRelatedData = await getTaskRelatedData();
       const tasks = await app.objection.models.task.query()
         .select(
           { id: 'tasks.id' },
@@ -58,7 +59,7 @@ export default async (app) => {
           { createdAt: 'tasks.createdAt' },
         )
         .leftJoinRelated('[status, creator, executor]');
-      reply.render('tasks/index', { tasks });
+      reply.render('tasks/index', { tasks, ...taskRelatedData });
 
       return reply;
     })

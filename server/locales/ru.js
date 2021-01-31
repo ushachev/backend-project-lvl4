@@ -168,12 +168,16 @@ export default {
       tasks: {
         index: {
           create: 'создать задачу',
+          filter: 'фильтр задач',
+          onlyMyTasks: 'только мои задачи',
+          submit: 'показать',
           empty: 'ещё не создано ни одной задачи',
           id: 'id',
           name: 'нименование',
           status: 'статус',
           author: 'автор',
           executor: 'исполнитель',
+          label: 'метка',
           createdAt: 'дата создания',
           notAssigned: 'не назначен',
           change: 'изменить',

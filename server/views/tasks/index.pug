@@ -2,10 +2,47 @@ extends ../layouts/application.pug
 
 block content
   .row.mb-2
-    .col
-      a(href=route('newTask'))
+    .col-auto.d-flex.align-items-center
+      a.pl-3(href=route('newTask'))
         +icon('circle-plus')
         span.ml-2= t('views.tasks.index.create')
+    .col-auto
+      button.btn.btn-link(type='button', data-toggle='collapse', data-target='#filterTasks')
+        +icon('filter')
+        span.ml-2= t('views.tasks.index.filter')
+  .row
+    .col
+      #filterTasks.collapse
+        form.mb-3(action=route('tasks'), method='get')
+          .form-row
+            .col-12.col-sm-4
+              .form-group
+                label(for='data_status')= t('views.tasks.index.status')
+                select.form-control(name='status', id='data_status')
+                  option
+                  each status in statuses
+                    option(value= status.id)= status.name
+            .col-12.col-sm-4
+              .form-group
+                label(for='data_executor')= t('views.tasks.index.executor')
+                select.form-control(name='executor', id='data_executor')
+                  option
+                  each user in users
+                    option(value= user.id)= user.fullName
+            .col-12.col-sm-4
+              .form-group
+                label(for='data_label')= t('views.tasks.index.label')
+                select.form-control(name='label', id='data_label')
+                  option
+                  each label in labels
+                    option(value= label.id)= label.name
+          .form-row.justify-content-sm-end.align-items-center
+            .col-auto.mb-3.mb-sm-0
+              .custom-control.custom-checkbox
+                  input.custom-control-input(type='checkbox', id='data_isCreatorUser', name='isCreatorUser')
+                  label.custom-control-label(for='data_isCreatorUser')= t('views.tasks.index.onlyMyTasks')
+            .col-12.col-sm-4
+              +submit(t('views.tasks.index.submit'))(class='btn-block')
   if tasks.length > 0
     .row
       .col
