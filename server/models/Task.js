@@ -24,7 +24,15 @@ export default class Task extends BaseModel {
     return {
       defaultSelects(query) {
         const { ref } = Task;
-        query.select(ref('id'), ref('name'), ref('description'), ref('createdAt'));
+        query.select(
+          ref('id'),
+          ref('name'),
+          'description',
+          'statusId',
+          'executorId',
+          'creatorId',
+          ref('createdAt'),
+        );
       },
     };
   }

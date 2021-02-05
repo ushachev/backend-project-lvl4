@@ -4,7 +4,8 @@ export default async (app) => {
   const { models } = app.objection;
 
   const getTaskData = async (taskId) => {
-    const task = await models.task.query().findById(taskId).select()
+    const task = await models.task.query().findById(taskId)
+      .modify('defaultSelects')
       .withGraphJoined('[status, creator, executor, labels]')
       .modifyGraph('[status, creator, executor, labels]', 'defaultSelects');
 
