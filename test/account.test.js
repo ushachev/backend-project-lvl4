@@ -11,7 +11,7 @@ tap.test(async (subTest) => {
   const app = await getApp();
   const { models, knex } = app.objection;
 
-  subTest.tearDown(() => app.close());
+  subTest.tearDown(async () => { await app.close(); });
 
   subTest.beforeEach(async (done) => {
     await knex.migrate.latest();

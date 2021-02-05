@@ -3,9 +3,9 @@ import getApp from '../server/index.js';
 
 tap.test('server main answers test:', async (subTest) => {
   const { test } = subTest;
-  const app = getApp();
+  const app = await getApp();
 
-  subTest.tearDown(() => app.close());
+  subTest.tearDown(async () => { await app.close(); });
 
   test(async (t) => {
     const response = await app.inject({
