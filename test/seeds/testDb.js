@@ -23,11 +23,13 @@ export const seed = async (knex) => {
       name: task1.name,
       status_id: 2,
       creator_id: 2,
+      executor_id: 3,
     },
     {
       name: task2.name,
       status_id: 3,
       creator_id: 3,
+      executor_id: 2,
     },
   ]);
 
@@ -38,6 +40,10 @@ export const seed = async (knex) => {
     },
     {
       task_id: 1,
+      label_id: 3,
+    },
+    {
+      task_id: 2,
       label_id: 3,
     },
     {

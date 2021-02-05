@@ -3,8 +3,8 @@ import casual from 'casual';
 import formAutoContent from 'form-auto-content';
 import getApp from '../server/index.js';
 import authenticateUser from './testHelpers/authentication.js';
+import getTaskIdsFromHtml from './testHelpers/parseHtml.js';
 import testData from './testHelpers/testData.js';
-import encrypt from '../server/lib/secure.js';
 
 tap.test(async (subTest) => {
   const { test } = subTest;
@@ -25,174 +25,6 @@ tap.test(async (subTest) => {
   });
 
   const { users: [defaultUser] } = testData;
-
-  test('register new user', async (t) => {
-    const passwordValue = casual.password;
-    const signUpData = {
-      firstName: casual.first_name,
-      lastName: casual.last_name,
-      email: casual.email,
-      password: passwordValue,
-      repeatedPassword: passwordValue,
-    };
-    const location = app.reverse('newSession');
-
-    const registrationRes = await app.inject({
-      method: 'POST',
-      url: '/users',
-      ...formAutoContent(signUpData),
-    });
-    const user = await models.user.query().findOne({ email: signUpData.email });
-
-    t.equal(registrationRes.statusCode, 302, 'POST /users returns a status code of 302');
-    t.equal(registrationRes.headers.location, location, `...and redirected to '${location}'`);
-    t.equal(user.email, signUpData.email, `account ${signUpData.email} registered successfully`);
-
-    const failedRegRes = await app.inject({
-      method: 'POST',
-      url: '/users',
-      ...formAutoContent({ ...signUpData, repeatedPassword: '' }),
-    });
-    const expectedHtml = '<div class="invalid-feedback">должно совпадать с паролем</div>';
-
-    t.equal(failedRegRes.statusCode, 422, 'POST /users with invalid data returns a status code of 422...');
-    t.has(failedRegRes.body, expectedHtml, '... and the body returned with the expected html block');
-  });
-
-  test('sign in / sign out user', async (t) => {
-    const { users: [user] } = testData;
-    const signInResponse = await app.inject({
-      method: 'POST',
-      url: '/session',
-      ...formAutoContent({ email: user.email, password: user.password }),
-    });
-
-    t.equal(signInResponse.statusCode, 302, 'POST /session returns a status code of 302');
-
-    const cookie = signInResponse.headers['set-cookie'];
-    const signedInRootResponse = await app.inject({
-      method: 'GET',
-      url: '/',
-      headers: { cookie },
-    });
-    const expectedHtml = `<span>приветствуем, ${user.firstName} ${user.lastName}</span>`;
-
-    t.has(signedInRootResponse.body, expectedHtml, 'GET / returns body containing expected html block');
-
-    const signOutResponse = await app.inject({
-      method: 'DELETE',
-      url: '/session',
-      headers: { cookie },
-    });
-
-    t.equal(signOutResponse.statusCode, 302, 'DELETE /session returns a status code of 302');
-
-    const failedSignInRes = await app.inject({
-      method: 'POST',
-      url: '/session',
-      ...formAutoContent({
-        email: casual.email,
-        password: casual.password,
-      }),
-    });
-    t.equal(failedSignInRes.statusCode, 422, 'POST /session with unregistered data returns a status code of 422');
-  });
-
-  test('update user', async (t) => {
-    const cookie = await authenticateUser(app, defaultUser);
-    const location = app.reverse('userAccount');
-
-    const newLastName = casual.last_name;
-    const changeProfileResponse = await app.inject({
-      method: 'PATCH',
-      url: '/user/profile',
-      ...formAutoContent({ firstName: defaultUser.firstName, lastName: newLastName }),
-      cookies: cookie,
-    });
-    let changedUser = await models.user.query().findById(1);
-
-    t.equal(changeProfileResponse.statusCode, 302, 'PATCH /user/profile returns a status code of 302');
-    t.equal(changeProfileResponse.headers.location, location, `...and redirected to '${location}'`);
-    t.equal(changedUser.lastName, newLastName, 'user profile changed successfully');
-
-    const failedChangeProfileResponse = await app.inject({
-      method: 'PATCH',
-      url: '/user/profile',
-      ...formAutoContent({ firstName: '', lastName: newLastName }),
-      cookies: cookie,
-    });
-
-    t.equal(
-      failedChangeProfileResponse.statusCode,
-      422,
-      'PATCH /user/profile with invalid data returns a status code of 422',
-    );
-
-    const newPassword = casual.password;
-    const changedPasswordData = {
-      currentPassword: defaultUser.password,
-      password: newPassword,
-      repeatedPassword: newPassword,
-    };
-    const changePasswordResponse = await app.inject({
-      method: 'PATCH',
-      url: '/user/password',
-      ...formAutoContent(changedPasswordData),
-      cookies: cookie,
-    });
-    changedUser = await models.user.query().findById(1);
-
-    t.equal(changePasswordResponse.statusCode, 302, 'PATCH /user/password returns a status code of 302');
-    t.equal(changePasswordResponse.headers.location, location, `...and redirected to '${location}'`);
-    t.equal(changedUser.passwordDigest, encrypt(newPassword), 'user password changed successfully');
-
-    const failedChangePasswordResponse = await app.inject({
-      method: 'PATCH',
-      url: '/user/password',
-      ...formAutoContent({ ...changedPasswordData, currentPassword: '' }),
-      cookies: cookie,
-    });
-
-    t.equal(
-      failedChangePasswordResponse.statusCode,
-      422,
-      'PATCH /user/password with invalid data returns a status code of 422',
-    );
-  });
-
-  test('delete user', async (t) => {
-    const { users: [, relatedUser] } = testData;
-    const cookie = await authenticateUser(app, defaultUser);
-    const relatedUserCookie = await authenticateUser(app, relatedUser);
-    const location = app.reverse('root');
-
-    const deleteUserResponse = await app.inject({
-      method: 'DELETE',
-      url: '/user',
-      cookies: cookie,
-    });
-    const users = await models.user.query();
-    const actualUserEmails = users.map(({ email }) => email);
-    const expectedUserEmails = testData.users
-      .map(({ email }) => email)
-      .filter((email) => email !== defaultUser.email);
-
-    t.equal(deleteUserResponse.statusCode, 302, 'DELETE /user returns a status code of 302');
-    t.equal(deleteUserResponse.headers.location, location, `...and redirected to '${location}'`);
-    t.same(actualUserEmails, expectedUserEmails, 'user deleted successfully');
-
-    const failDeleteUserResponse = await app.inject({
-      method: 'DELETE',
-      url: '/user',
-      cookies: relatedUserCookie,
-    });
-
-    t.equal(
-      failDeleteUserResponse.statusCode,
-      422,
-      'DELETE /user on related entity returns a status code of 422',
-    );
-  });
 
   test('create task status', async (t) => {
     const cookie = await authenticateUser(app, defaultUser);
@@ -504,5 +336,64 @@ tap.test(async (subTest) => {
       422,
       'DELETE /labels/2 on related entity returns a status code of 422',
     );
+  });
+
+  test('filter tasks', async (t) => {
+    const cookie = await authenticateUser(app, defaultUser);
+    const filterResponse1 = await app.inject({
+      method: 'GET',
+      url: '/tasks',
+      query: {
+        status: '2',
+        executor: '3',
+        label: '2',
+      },
+      cookies: cookie,
+    });
+    const filteredTaskIds1 = getTaskIdsFromHtml(filterResponse1.body);
+
+    t.equal(filterResponse1.statusCode, 200, 'GET /tasks with query params returns a status code of 200');
+    t.same(filteredTaskIds1, [1], 'filter by status, executor, label selects task with id 1 correctly');
+
+    const filterResponse2 = await app.inject({
+      method: 'GET',
+      url: '/tasks',
+      query: {
+        status: '3',
+        executor: '2',
+        label: '3',
+      },
+      cookies: cookie,
+    });
+    const filteredTaskIds2 = getTaskIdsFromHtml(filterResponse2.body);
+
+    t.same(filteredTaskIds2, [2], 'filter by status, executor, label selects task with id 2 correctly');
+
+    const filterResponse3 = await app.inject({
+      method: 'GET',
+      url: '/tasks',
+      query: {
+        label: '3',
+      },
+      cookies: cookie,
+    });
+    const filteredTaskIds3 = getTaskIdsFromHtml(filterResponse3.body);
+
+    t.same(filteredTaskIds3, [1, 2], 'filter for the same label selects tasks correctly');
+
+    const { users: [, taskCreator] } = testData;
+    const creatorCookie = await authenticateUser(app, taskCreator);
+    const filterResponse4 = await app.inject({
+      method: 'GET',
+      url: '/tasks',
+      query: {
+        label: '3',
+        isCreatorUser: 'on',
+      },
+      cookies: creatorCookie,
+    });
+    const filteredTaskIds4 = getTaskIdsFromHtml(filterResponse4.body);
+
+    t.same(filteredTaskIds4, [1], 'filter for the same label by creator selects the task correctly');
   });
 });

@@ -19,6 +19,14 @@ export default class Status extends unique(BaseModel) {
     };
   }
 
+  static get modifiers() {
+    return {
+      defaultSelects(query) {
+        query.select('id', 'name');
+      },
+    };
+  }
+
   static get relationMappings() {
     return {
       tasks: {

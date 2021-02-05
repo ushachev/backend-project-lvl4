@@ -86,7 +86,7 @@ export default {
         tasks: 'задачи',
         statuses: 'статусы',
         tags: 'метки',
-        urgently: 'срочные задачи',
+        myTasks: 'мои задачи',
       },
     },
     views: {
@@ -172,6 +172,7 @@ export default {
           onlyMyTasks: 'только мои задачи',
           submit: 'показать',
           empty: 'ещё не создано ни одной задачи',
+          notFound: 'не найдено ни одной задачи',
           id: 'id',
           name: 'нименование',
           status: 'статус',
@@ -193,6 +194,7 @@ export default {
           executor: 'исполнитель',
           status: 'статус',
           tags: 'метки',
+          noLabel: 'метка не выбрана',
         },
         edit: {
           title: 'изменение задачи',

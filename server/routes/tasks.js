@@ -1,39 +1,20 @@
-import objection from 'objection';
 import { requireSignedIn } from '../lib/preHandlers.js';
 
-const { raw } = objection;
-
 export default async (app) => {
-  const getTaskData = async (taskId) => {
-    const task = await app.objection.models.task.query().findById(taskId)
-      .select(
-        { id: 'tasks.id' },
-        { name: 'tasks.name' },
-        { description: 'tasks.description' },
-        { statusId: 'tasks.statusId' },
-        { status: 'status.name' },
-        { creatorId: 'tasks.creatorId' },
-        { executorId: 'tasks.executorId' },
-        { creator: raw('?? || ? || ??', 'creator.firstName', ' ', 'creator.lastName') },
-        { executor: raw('?? || ? || ??', 'executor.firstName', ' ', 'executor.lastName') },
-        { createdAt: 'tasks.createdAt' },
-      )
-      .leftJoinRelated('[status, creator, executor]');
-    const labels = await task.$relatedQuery('labels').select(
-      { id: 'labels.id' },
-      { name: 'labels.name' },
-    );
+  const { models } = app.objection;
 
-    return { task, labels };
+  const getTaskData = async (taskId) => {
+    const task = await models.task.query().findById(taskId)
+      .withGraphJoined('[status, creator, executor, labels]')
+      .modifyGraph('[status, creator, executor, labels]', 'defaultSelects');
+
+    return task;
   };
 
   const getTaskRelatedData = async () => {
-    const users = await app.objection.models.user.query().select(
-      { id: 'users.id' },
-      { fullName: raw('?? || ? || ??', 'users.firstName', ' ', 'users.lastName') },
-    );
-    const statuses = await app.objection.models.status.query();
-    const labels = await app.objection.models.label.query();
+    const users = await models.user.query().modify('defaultSelects');
+    const statuses = await models.status.query();
+    const labels = await models.label.query();
 
     return { users, statuses, labels };
   };
@@ -48,24 +29,30 @@ export default async (app) => {
 
   app
     .get('/tasks', { name: 'tasks', preHandler: requireSignedIn }, async (request, reply) => {
+      const { query } = request;
       const taskRelatedData = await getTaskRelatedData();
-      const tasks = await app.objection.models.task.query()
-        .select(
-          { id: 'tasks.id' },
-          { name: 'tasks.name' },
-          { status: 'status.name' },
-          { creator: raw('?? || ? || ??', 'creator.firstName', ' ', 'creator.lastName') },
-          { executor: raw('?? || ? || ??', 'executor.firstName', ' ', 'executor.lastName') },
-          { createdAt: 'tasks.createdAt' },
-        )
-        .leftJoinRelated('[status, creator, executor]');
-      reply.render('tasks/index', { tasks, ...taskRelatedData });
+      const filteredTasks = await models.task.query()
+        .modify('defaultSelects')
+        .withGraphJoined('[status, creator, executor, labels(selectId)]')
+        .modifyGraph('[status, creator, executor]', 'defaultSelects')
+        .where(query.isCreatorUser ? { 'creator.id': request.currentUser.id } : {})
+        .where(query.status ? { 'status.id': Number(query.status) } : {})
+        .where(query.executor ? { 'executor.id': Number(query.executor) } : {});
+
+      const filterByLabel = (task) => task.labels
+        .map(({ id }) => id)
+        .includes(Number(query.label));
+      const tasks = query.label
+        ? filteredTasks.filter(filterByLabel)
+        : filteredTasks;
+
+      reply.render('tasks/index', { tasks, ...taskRelatedData, query });
 
       return reply;
     })
     .get('/tasks/:id', { preHandler: requireSignedIn }, async (request, reply) => {
-      const { task, labels } = await getTaskData(request.params.id);
-      reply.render('tasks/show', { task: { ...task, labelNames: labels.map(({ name }) => name) } });
+      const task = await getTaskData(request.params.id);
+      reply.render('tasks/show', { task });
 
       return reply;
     })
@@ -76,9 +63,9 @@ export default async (app) => {
       return reply;
     })
     .get('/tasks/:id/edit', { preHandler: requireSignedIn }, async (request, reply) => {
-      const { task, labels } = await getTaskData(request.params.id);
+      const values = await getTaskData(request.params.id);
+      values.labelIds = values.labels.map(({ id }) => id);
       const taskRelatedData = await getTaskRelatedData();
-      const values = { ...task, labelIds: labels.map(({ id }) => id) };
 
       reply.render('tasks/edit', { ...taskRelatedData, values, errors: {} });
 
@@ -88,8 +75,8 @@ export default async (app) => {
       const { labelIds, ...taskData } = normalizeTaskInputData(request.body);
 
       try {
-        await app.objection.models.task.transaction(async (trx) => {
-          const task = await app.objection.models.user.relatedQuery('createdTasks', trx)
+        await models.task.transaction(async (trx) => {
+          const task = await models.user.relatedQuery('createdTasks', trx)
             .for(request.currentUser.id)
             .insert(taskData);
           await Promise.all(labelIds.map((id) => task.$relatedQuery('labels', trx).relate(id)));
@@ -113,11 +100,11 @@ export default async (app) => {
       }
     })
     .patch('/tasks/:id', { preHandler: requireSignedIn }, async (request, reply) => {
-      const task = await app.objection.models.task.query().findById(request.params.id);
+      const task = await models.task.query().findById(request.params.id);
       const { labelIds, ...taskData } = normalizeTaskInputData(request.body);
 
       try {
-        await app.objection.models.task.transaction(async (trx) => {
+        await models.task.transaction(async (trx) => {
           await task.$query(trx).patch(taskData);
           await task.$relatedQuery('labels', trx).unrelate();
           await Promise.all(labelIds.map((id) => task.$relatedQuery('labels', trx).relate(id)));
@@ -144,18 +131,17 @@ export default async (app) => {
       }
     })
     .delete('/tasks/:id', { preHandler: requireSignedIn }, async (request, reply) => {
-      const { task, labels } = await getTaskData(request.params.id);
+      const task = await getTaskData(request.params.id);
 
       if (task.creatorId !== request.currentUser.id) {
-        const labelNames = labels.map(({ name }) => name);
         request.flash('danger', request.t('flash.tasks.delete.authorship'));
-        reply.code(422).render('tasks/show', { task: { ...task, labelNames } });
+        reply.code(422).render('tasks/show', { task });
 
         return reply;
       }
 
       try {
-        await app.objection.models.task.transaction(async (trx) => {
+        await models.task.transaction(async (trx) => {
           await task.$relatedQuery('labels', trx).unrelate();
           await task.$query(trx).delete();
         });
@@ -167,9 +153,8 @@ export default async (app) => {
       } catch (error) {
         request.rollbar(error);
 
-        const labelNames = labels.map(({ name }) => name);
         request.flash('danger', request.t('flash.tasks.delete.error', { name: task.name }));
-        reply.code(422).render('tasks/show', { task: { ...task, labelNames } });
+        reply.code(422).render('tasks/show', { task });
 
         return reply;
       }

@@ -21,6 +21,6 @@
       .invalid-feedback= getInputErrorMessage(statusErrors)
   .form-group.col-6
     label(for='label')= t('views.tasks._form.tags')
-    select.selectpicker.form-control(name='labelIds', id='label', multiple, data-style='text-dark', data-size='4', data-dropup-auto='false', title='метка не выбрана')
+    select.selectpicker.form-control(name='labelIds', id='label', multiple, data-style='text-dark', data-size='4', data-dropup-auto='false', title=t('views.tasks._form.noLabel'))
       each label in labels
         option(value= label.id, selected= values.labelIds.includes(label.id))= label.name

@@ -10,15 +10,15 @@ block content
         li.list-group-item.active
           p.lead= task.name
         li.list-group-item= `${t('views.tasks.show.author')}: `
-          span= task.creator
+          span= task.creator.fullName
         li.list-group-item= `${t('views.tasks.show.executor')}: `
-          span= task.executor || t('views.tasks.show.notAssigned')
+          span= task.executor ? task.executor.fullName : t('views.tasks.show.notAssigned')
         li.list-group-item= `${t('views.tasks.show.status')}: `
-          span= task.status
+          span= task.status.name
         li.list-group-item= `${t('views.tasks.show.labels')}:`
-          if task.labelNames.length
-            each labelName in task.labelNames
-              span= ` #${labelName}`
+          if task.labels.length
+            each label in task.labels
+              span= ` #${label.name}`
           else
             span= ` ${t('views.tasks.show.withoutLabels')}`
         li.list-group-item= `${t('views.tasks.show.createdAt')}: `

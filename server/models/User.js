@@ -1,8 +1,10 @@
+import objection from 'objection';
 import objectionUnique from 'objection-unique';
 import BaseModel from './BaseModel.js';
 import encrypt from '../lib/secure.js';
 
 const unique = objectionUnique({ fields: ['email'] });
+const { raw } = objection;
 
 export default class User extends unique(BaseModel) {
   static get tableName() {
@@ -19,6 +21,14 @@ export default class User extends unique(BaseModel) {
         lastName: { type: 'string', minLength: 1 },
         email: { type: 'string', format: 'email' },
         password: { type: 'string', minLength: 3 },
+      },
+    };
+  }
+
+  static get modifiers() {
+    return {
+      defaultSelects(query) {
+        query.select('id', raw('?? || ? || ??', 'firstName', ' ', 'lastName').as('fullName'));
       },
     };
   }

@@ -20,6 +20,15 @@ export default class Task extends BaseModel {
     };
   }
 
+  static get modifiers() {
+    return {
+      defaultSelects(query) {
+        const { ref } = Task;
+        query.select(ref('id'), ref('name'), ref('description'), ref('createdAt'));
+      },
+    };
+  }
+
   static get relationMappings() {
     return {
       status: {

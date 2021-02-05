@@ -23,27 +23,27 @@ html(lang="ru")
               span.navbar-toggler-icon
           #navbarNav.collapse.navbar-collapse.align-self-start.w-100
             ul.navbar-nav.flex-column.text-nowrap.align-self-stretch.border-top.border-secondary.py-3
-              - const { url } = reply.request;
-              li.nav-item(class=(url === route('users') && 'active'))
+              - const { routerPath } = reply.request;
+              li.nav-item(class=(routerPath === route('users') && 'active'))
                 a.nav-link(href=route('users'))
                   +icon('users')
                   span.pl-2= t('layouts.application.users')
-              li.nav-item(class=(url === route('tasks') && 'active'))
+              li.nav-item(class=(routerPath === route('tasks') && 'active'))
                 a.nav-link(href=route('tasks'))
                   +icon('list-check')
                   span.pl-2= t('layouts.application.tasks')
-              li.nav-item(class=(url === route('statuses') && 'active'))
+              li.nav-item(class=(routerPath === route('statuses') && 'active'))
                 a.nav-link(href=route('statuses'))
                   +icon('checks')
                   span.pl-2= t('layouts.application.statuses')
-              li.nav-item.mb-2(class=(url === route('labels') && 'active'))
+              li.nav-item.mb-2(class=(routerPath === route('labels') && 'active'))
                 a.nav-link(href=route('labels'))
                   +icon('tag')
                   span.pl-2= t('layouts.application.tags')
               li.nav-item.mt-auto.border-top.border-secondary(class='')
-                a.nav-link.text-lg-center(href='#')
+                a.nav-link.text-lg-center(href=`${route('tasks')}?isCreatorUser=on`)
                   +icon('urgent')
-                  span.pl-2= t('layouts.application.urgently')
+                  span.pl-2= t('layouts.application.myTasks')
 
       main.container-fluid
         - const flashes = reply.flash()

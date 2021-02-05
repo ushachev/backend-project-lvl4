@@ -22,12 +22,4 @@ tap.test('server main answers test:', async (subTest) => {
     });
     t.equal(response.statusCode, 404, 'GET /wrong-path returns a status code of 404');
   });
-
-  test(async (t) => {
-    const response = await app.inject({
-      method: 'GET',
-      url: '/throw',
-    });
-    t.equal(response.statusCode, 500, 'GET /throw returns a status code of 500');
-  });
 });

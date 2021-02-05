@@ -1,6 +1,7 @@
 extends ../layouts/application.pug
 
 block content
+  - const isQueried = Object.keys(query).length > 0
   .row.mb-2
     .col-auto.d-flex.align-items-center
       a.pl-3(href=route('newTask'))
@@ -12,7 +13,7 @@ block content
         span.ml-2= t('views.tasks.index.filter')
   .row
     .col
-      #filterTasks.collapse
+      #filterTasks.collapse(class= isQueried ? 'show' : '')
         form.mb-3(action=route('tasks'), method='get')
           .form-row
             .col-12.col-sm-4
@@ -21,25 +22,25 @@ block content
                 select.form-control(name='status', id='data_status')
                   option
                   each status in statuses
-                    option(value= status.id)= status.name
+                    option(value= status.id, selected= (query.status == status.id))= status.name
             .col-12.col-sm-4
               .form-group
                 label(for='data_executor')= t('views.tasks.index.executor')
                 select.form-control(name='executor', id='data_executor')
                   option
                   each user in users
-                    option(value= user.id)= user.fullName
+                    option(value= user.id, selected= (query.executor == user.id))= user.fullName
             .col-12.col-sm-4
               .form-group
                 label(for='data_label')= t('views.tasks.index.label')
                 select.form-control(name='label', id='data_label')
                   option
                   each label in labels
-                    option(value= label.id)= label.name
+                    option(value= label.id, selected= (query.label == label.id))= label.name
           .form-row.justify-content-sm-end.align-items-center
             .col-auto.mb-3.mb-sm-0
               .custom-control.custom-checkbox
-                  input.custom-control-input(type='checkbox', id='data_isCreatorUser', name='isCreatorUser')
+                  input.custom-control-input(type='checkbox', id='data_isCreatorUser', name='isCreatorUser', checked= query.isCreatorUser)
                   label.custom-control-label(for='data_isCreatorUser')= t('views.tasks.index.onlyMyTasks')
             .col-12.col-sm-4
               +submit(t('views.tasks.index.submit'))(class='btn-block')
@@ -63,9 +64,9 @@ block content
                 td
                   a(href=`/tasks/${task.id}`)
                     span= task.name
-                td= task.status
-                td= task.creator
-                td= task.executor || t('views.tasks.index.notAssigned')
+                td= task.status.name
+                td= task.creator.fullName
+                td= task.executor ? task.executor.fullName : t('views.tasks.index.notAssigned')
                 td= formatDate(task.createdAt)
                 td.text-right
                   a(href=`/tasks/${task.id}/edit`, data-toggle='tooltip', data-placement='auto', title=t('views.tasks.index.change'))
@@ -73,4 +74,4 @@ block content
   else
     .row
       .col
-        p.pt-3.border-top.border-secondary.text-center= t('views.tasks.index.empty')
+        p.pt-3.border-top.border-secondary.text-center= isQueried ? t('views.tasks.index.notFound') : t('views.tasks.index.empty')

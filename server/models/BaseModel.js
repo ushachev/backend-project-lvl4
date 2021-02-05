@@ -1,5 +1,3 @@
-/* eslint-disable no-underscore-dangle */
-
 import objection from 'objection';
 
 const { Model } = objection;
