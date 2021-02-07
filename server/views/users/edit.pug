@@ -2,7 +2,7 @@ extends ../layouts/application.pug
 
 block content
   .row.justify-content-center.mt-3
-    - const currentUser = reply.request.currentUser;
+    - const currentUser = reply.request.user;
     .col-auto.text-right
       .list-group(role='tablist')
         .list-group-item

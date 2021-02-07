@@ -1,5 +1,3 @@
-import { requireSignedIn } from '../lib/preHandlers.js';
-
 export default async (app) => {
   const { models } = app.objection;
 
@@ -29,14 +27,14 @@ export default async (app) => {
   });
 
   app
-    .get('/tasks', { name: 'tasks', preHandler: requireSignedIn }, async (request, reply) => {
+    .get('/tasks', { name: 'tasks', preValidation: app.authenticate }, async (request, reply) => {
       const { query } = request;
       const taskRelatedData = await getTaskRelatedData();
       const filteredTasks = await models.task.query()
         .modify('defaultSelects')
         .withGraphJoined('[status, creator, executor, labels(selectId)]')
         .modifyGraph('[status, creator, executor]', 'defaultSelects')
-        .where(query.isCreatorUser ? { 'creator.id': request.currentUser.id } : {})
+        .where(query.isCreatorUser ? { 'creator.id': request.user.id } : {})
         .where(query.status ? { 'status.id': Number(query.status) } : {})
         .where(query.executor ? { 'executor.id': Number(query.executor) } : {});
 
@@ -51,19 +49,19 @@ export default async (app) => {
 
       return reply;
     })
-    .get('/tasks/:id', { preHandler: requireSignedIn }, async (request, reply) => {
+    .get('/tasks/:id', { preValidation: app.authenticate }, async (request, reply) => {
       const task = await getTaskData(request.params.id);
       reply.render('tasks/show', { task });
 
       return reply;
     })
-    .get('/tasks/new', { name: 'newTask', preHandler: requireSignedIn }, async (request, reply) => {
+    .get('/tasks/new', { name: 'newTask', preValidation: app.authenticate }, async (request, reply) => {
       const taskRelatedData = await getTaskRelatedData();
       reply.render('tasks/new', { ...taskRelatedData, values: { labelIds: [] }, errors: {} });
 
       return reply;
     })
-    .get('/tasks/:id/edit', { preHandler: requireSignedIn }, async (request, reply) => {
+    .get('/tasks/:id/edit', { preValidation: app.authenticate }, async (request, reply) => {
       const values = await getTaskData(request.params.id);
       values.labelIds = values.labels.map(({ id }) => id);
       const taskRelatedData = await getTaskRelatedData();
@@ -72,13 +70,13 @@ export default async (app) => {
 
       return reply;
     })
-    .post('/tasks', { preHandler: requireSignedIn }, async (request, reply) => {
+    .post('/tasks', { preValidation: app.authenticate }, async (request, reply) => {
       const { labelIds, ...taskData } = normalizeTaskInputData(request.body);
 
       try {
         await models.task.transaction(async (trx) => {
           const task = await models.user.relatedQuery('createdTasks', trx)
-            .for(request.currentUser.id)
+            .for(request.user.id)
             .insert(taskData);
           await Promise.all(labelIds.map((id) => task.$relatedQuery('labels', trx).relate(id)));
         });
@@ -100,7 +98,7 @@ export default async (app) => {
         return reply;
       }
     })
-    .patch('/tasks/:id', { preHandler: requireSignedIn }, async (request, reply) => {
+    .patch('/tasks/:id', { preValidation: app.authenticate }, async (request, reply) => {
       const task = await models.task.query().findById(request.params.id);
       const { labelIds, ...taskData } = normalizeTaskInputData(request.body);
 
@@ -121,7 +119,7 @@ export default async (app) => {
         }
         const taskRelatedData = await getTaskRelatedData();
 
-        request.flash('danger', request.t('flash.tasks.edit.error', { name: task.name }));
+        request.flash('error', request.t('flash.tasks.edit.error', { name: task.name }));
         reply.code(422).render('tasks/edit', {
           ...taskRelatedData,
           values: { id: task.id, ...taskData, labelIds },
@@ -131,11 +129,11 @@ export default async (app) => {
         return reply;
       }
     })
-    .delete('/tasks/:id', { preHandler: requireSignedIn }, async (request, reply) => {
+    .delete('/tasks/:id', { preValidation: app.authenticate }, async (request, reply) => {
       const task = await getTaskData(request.params.id);
 
-      if (task.creatorId !== request.currentUser.id) {
-        request.flash('danger', request.t('flash.tasks.delete.authorship'));
+      if (task.creatorId !== request.user.id) {
+        request.flash('error', request.t('flash.tasks.delete.authorship'));
         reply.code(422).render('tasks/show', { task });
 
         return reply;
@@ -154,7 +152,7 @@ export default async (app) => {
       } catch (error) {
         request.rollbar(error);
 
-        request.flash('danger', request.t('flash.tasks.delete.error', { name: task.name }));
+        request.flash('error', request.t('flash.tasks.delete.error', { name: task.name }));
         reply.code(422).render('tasks/show', { task });
 
         return reply;

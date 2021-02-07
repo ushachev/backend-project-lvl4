@@ -1,9 +1,9 @@
 import getValidator from '../lib/validators.js';
-import { requireSignedIn, requireSignedOut } from '../lib/preHandlers.js';
+import requireSignedOut from '../lib/preHandlers.js';
 
 export default async (app) => {
   app
-    .get('/users', { name: 'users', preHandler: requireSignedIn }, async (request, reply) => {
+    .get('/users', { name: 'users', preValidation: app.authenticate }, async (request, reply) => {
       const users = await app.objection.models.user.query();
       reply.render('users/index', { users });
       return reply;
@@ -24,7 +24,7 @@ export default async (app) => {
 
         return reply;
       } catch ({ data }) {
-        request.flash('danger', request.t('flash.users.create.error'));
+        request.flash('error', request.t('flash.users.create.error'));
         reply.code(422).render('users/new', { values: request.body, errors: data });
         return reply;
       }

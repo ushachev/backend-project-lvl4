@@ -31,14 +31,16 @@ html(lang="ru")
               span.pl-2= t('layouts.unauthenticated.signIn')
 
     main.container.mb-5
-      .fixed-bottom.ml-5.mr-5.mb-5.pb-5
-        .row
-          .col-6.mr-auto
-            each messages, type in reply.flash() || []
-              each message in messages
-                .alert.alert-dismissible.fade.show(class=`alert-${type}`, role='alert')= message
-                  button.close(type='button', data-dismiss='alert', aria-label='Close')
-                    span(aria-hidden='true') &times;
+      - const flashes = reply.flash() || {}
+      if Object.keys(flashes).length
+        .fixed-bottom.ml-5.mr-5.mb-5.pb-5
+          .row
+            .col-6.mr-auto
+              each messages, type in flashes
+                each message in messages
+                  .alert.alert-dismissible.fade.show(class=`alert-${getAlertClass(type)}`, role='alert')= message
+                    button.close(type='button', data-dismiss='alert', aria-label='Close')
+                      span(aria-hidden='true') &times;
 
       block content
 

@@ -1,18 +1,16 @@
-import { requireSignedIn } from '../lib/preHandlers.js';
-
 export default async (app) => {
   app
-    .get('/statuses', { name: 'statuses', preHandler: requireSignedIn }, async (request, reply) => {
+    .get('/statuses', { name: 'statuses', preValidation: app.authenticate }, async (request, reply) => {
       const statuses = await app.objection.models.status.query();
       reply.render('statuses/index', { statuses });
       return reply;
     })
-    .get('/statuses/:id/edit', { preHandler: requireSignedIn }, async (request, reply) => {
+    .get('/statuses/:id/edit', { preValidation: app.authenticate }, async (request, reply) => {
       const status = await app.objection.models.status.query().findById(request.params.id);
       reply.render('statuses/edit', { values: status });
       return reply;
     })
-    .post('/statuses', { preHandler: requireSignedIn }, async (request, reply) => {
+    .post('/statuses', { preValidation: app.authenticate }, async (request, reply) => {
       try {
         const status = await app.objection.models.status.fromJson(request.body);
         await app.objection.models.status.query().insert(status);
@@ -26,7 +24,7 @@ export default async (app) => {
         return reply;
       }
     })
-    .patch('/statuses/:id', { preHandler: requireSignedIn }, async (request, reply) => {
+    .patch('/statuses/:id', { preValidation: app.authenticate }, async (request, reply) => {
       const status = await app.objection.models.status.query().findById(request.params.id);
 
       try {
@@ -39,13 +37,13 @@ export default async (app) => {
 
         return reply;
       } catch ({ data }) {
-        request.flash('danger', request.t('flash.statuses.edit.error', { name: status.name }));
+        request.flash('error', request.t('flash.statuses.edit.error', { name: status.name }));
         const values = { id: request.params.id, name: request.body.name };
         reply.code(422).render('statuses/edit', { values, errors: data });
         return reply;
       }
     })
-    .delete('/statuses/:id', { preHandler: requireSignedIn }, async (request, reply) => {
+    .delete('/statuses/:id', { preValidation: app.authenticate }, async (request, reply) => {
       try {
         const status = await app.objection.models.status.query().findById(request.params.id);
         await status.$query().delete();
@@ -59,7 +57,7 @@ export default async (app) => {
         }
         const statuses = await app.objection.models.status.query();
 
-        request.flash('danger', request.t('flash.statuses.delete.error'));
+        request.flash('error', request.t('flash.statuses.delete.error'));
         reply.code(422).render('statuses/index', { statuses });
 
         return reply;

@@ -37,6 +37,10 @@ export default class User extends unique(BaseModel) {
     this.passwordDigest = encrypt(value);
   }
 
+  verifyPassword(password) {
+    return encrypt(password) === this.passwordDigest;
+  }
+
   static get relationMappings() {
     return {
       createdTasks: {

@@ -2,6 +2,7 @@ import { join } from 'path';
 import fs from 'fs';
 import fastify from 'fastify';
 import autoLoad from 'fastify-autoload';
+import fastifyPassport from 'fastify-passport';
 import fastifyErrorPage from 'fastify-error-page';
 import pointOfView from 'point-of-view';
 import pug from 'pug';
@@ -9,7 +10,6 @@ import fastifyStatic from 'fastify-static';
 import fastifyReverseRoutes from 'fastify-reverse-routes';
 import fastifyFormbody from 'fastify-formbody';
 import fastifySecureSession from 'fastify-secure-session';
-import fastifyFlash from 'fastify-flash';
 import fastifyMethodOverride from 'fastify-method-override';
 import fastifyObjectionjs from 'fastify-objectionjs';
 import i18next from 'i18next';
@@ -20,6 +20,7 @@ import webpackConfig from '../webpack.config.babel.js';
 import knexConfig from '../knexfile.js';
 import models from './models/index.js';
 import getHelpers from './helpers/index.js';
+import FormStrategy from './lib/passportStrategies/FormStrategy.js';
 
 const mode = process.env.NODE_ENV || 'development';
 const isDevelopment = mode === 'development';
@@ -40,6 +41,19 @@ const registerPlugins = (app) => {
   if (isDevelopment) {
     app.register(fastifyErrorPage);
   }
+  fastifyPassport.registerUserDeserializer((user) => app.objection.models.user.query()
+    .findById(user.id));
+  fastifyPassport.registerUserSerializer((user) => Promise.resolve(user));
+  fastifyPassport.use(new FormStrategy('form', app));
+  app.decorate('fp', fastifyPassport);
+  app.decorate('authenticate', (...args) => fastifyPassport.authenticate(
+    'form',
+    {
+      failureRedirect: app.reverse('root'),
+      failureFlash: i18next.t('flash.authError'),
+    },
+  )(...args));
+
   app
     .register(i18nextMiddleware.plugin, { i18next })
     .register(fastifyReverseRoutes.plugin)
@@ -50,7 +64,8 @@ const registerPlugins = (app) => {
         path: '/',
       },
     })
-    .register(fastifyFlash)
+    .register(fastifyPassport.initialize())
+    .register(fastifyPassport.secureSession())
     .register(fastifyMethodOverride)
     .register(fastifyObjectionjs, {
       knexConfig: knexConfig[mode],
@@ -92,19 +107,6 @@ const setUpStaticAssets = (app) => {
   });
 };
 
-const addHooks = (app) => {
-  app.decorateRequest('currentUser', null);
-  app.decorateRequest('signedIn', false);
-
-  app.addHook('preHandler', async (request) => {
-    const userId = request.session.get('userId');
-    if (userId) {
-      request.currentUser = await app.objection.models.user.query().findById(userId);
-      request.signedIn = true;
-    }
-  });
-};
-
 export default () => {
   const logger = !isTest && {
     prettyPrint: isDevelopment,
@@ -117,7 +119,6 @@ export default () => {
   registerPlugins(app);
   setUpViews(app);
   setUpStaticAssets(app);
-  addHooks(app);
 
   return app;
 };

@@ -10,6 +10,12 @@ const errorKeywordMapping = {
   minimum: () => 'поле не должно быть пустым',
 };
 
+const alertTypeMapping = {
+  error: 'danger',
+  success: 'success',
+  info: 'info',
+};
+
 export default (app) => ({
   route: (name) => app.reverse(name),
   getInputErrorMessage: (errors) => errors
@@ -17,6 +23,7 @@ export default (app) => ({
       ? errorKeywordMapping[keyword](params)
       : message))
     .join(', '),
+  getAlertClass: (type) => alertTypeMapping[type] || 'secondary',
   formatDate: (str) => {
     const date = new Date(`${str} GMT`);
     return date.toLocaleString();
