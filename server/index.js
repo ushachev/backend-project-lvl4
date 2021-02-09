@@ -24,7 +24,6 @@ import FormStrategy from './lib/passportStrategies/FormStrategy.js';
 
 const mode = process.env.NODE_ENV || 'development';
 const isDevelopment = mode === 'development';
-const isTest = mode === 'test';
 
 const setupLocalization = () => {
   i18next.init({
