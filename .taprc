@@ -1,4 +1,4 @@
-test-ignore: test/testHelpers/*.*|test/seeds/*.*
+test-ignore: test/testHelpers/*.*|test/seeds/*.*|jest/*.*
 coverage-report:
   - text
   - lcov

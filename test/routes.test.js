@@ -7,7 +7,7 @@ tap.test(async (subTest) => {
   const { test } = subTest;
   const app = await getApp();
 
-  subTest.tearDown(async () => { await app.close(); });
+  subTest.tearDown(() => app.close());
 
   await app.objection.knex.migrate.latest();
   await app.objection.knex.seed.run({ directory: './test/seeds' });

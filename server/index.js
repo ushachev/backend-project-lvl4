@@ -108,7 +108,7 @@ const setUpStaticAssets = (app) => {
 };
 
 export default () => {
-  const logger = !isTest && {
+  const logger = {
     prettyPrint: isDevelopment,
     base: null,
   };
