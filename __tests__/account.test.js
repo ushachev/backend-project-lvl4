@@ -43,7 +43,6 @@ describe('register new user', () => {
   };
 
   test('POST /users with valid data', async () => {
-    const location = app.reverse('newSession');
     const response = await app.inject({
       method: 'POST',
       url: app.reverse('users'),
@@ -52,7 +51,7 @@ describe('register new user', () => {
     const user = await models.user.query().findOne({ email: signUpData.email });
 
     expect(response.statusCode).toBe(302);
-    expect(response.headers.location).toBe(location);
+    expect(response.headers.location).toBe(app.reverse('newSession'));
     expect(user.email).toBe(signUpData.email);
   });
 
@@ -80,11 +79,11 @@ describe('sign in / sign out user', () => {
 
     expect(signInResponse.statusCode).toBe(302);
 
-    const cookie = signInResponse.headers['set-cookie'];
+    const cookieHeader = signInResponse.headers['set-cookie'];
     const signedInRootResponse = await app.inject({
       method: 'GET',
       url: app.reverse('root'),
-      headers: { cookie },
+      headers: { cookie: cookieHeader },
     });
     const expectedHtml = `<span>приветствуем, ${user.firstName} ${user.lastName}</span>`;
 

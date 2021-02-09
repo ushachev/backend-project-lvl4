@@ -14,10 +14,10 @@ lint:
 	npx eslint .
 
 test:
-	npm test -- --no-coverage
+	npm test
 
 test-coverage:
-	npm test
+	npm test -- --coverage
 
 migrate:
 	npx knex --esm migrate:latest

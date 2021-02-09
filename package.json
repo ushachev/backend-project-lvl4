@@ -7,12 +7,12 @@
   },
   "jest": {
     "modulePathIgnorePatterns": [
-       "<rootDir>/__tests__/helpers/",
-       "<rootDir>/__tests__/seeds/"
+      "<rootDir>/__tests__/helpers/",
+      "<rootDir>/__tests__/seeds/"
     ]
-   },
+  },
   "scripts": {
-    "test": "NODE_ENV=test tap",
+    "test": "jest",
     "prebuild": "rm -rf dist",
     "build-configs": "babel webpack.config.babel.js knexfile.js --out-dir dist",
     "build-db": "NODE_ENV=production knex --esm migrate:latest",
@@ -52,7 +52,6 @@
     "nodemon": "^2.0.4",
     "pino-pretty": "^4.1.0",
     "sqlite3": "^5.0.0",
-    "tap": "^14.11.0",
     "webpack-cli": "^4.3.1",
     "webpack-dev-server": "^3.11.1"
   },
