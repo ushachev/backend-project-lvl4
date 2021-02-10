@@ -1,7 +1,7 @@
 include ../mixins/forms.pug
 include ../mixins/components.pug
 
-- const t = reply.request.t;
+- const { t } = reply.request;
 
 doctype html
 html(lang="ru")
@@ -48,9 +48,9 @@ html(lang="ru")
       main.container-fluid
         - const flashes = reply.flash() || {}
         if Object.keys(flashes).length
-          .fixed-bottom.ml-5.mr-5.mb-5.pb-5
+          .fixed-top.mx-5.mt-5
             .row
-              .col-6.ml-auto
+              .col-6.mx-auto
                 each messages, type in flashes
                   each message in messages
                     .alert.alert-dismissible.fade.show(class=`alert-${getAlertClass(type)}`, role='alert')= message
