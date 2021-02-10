@@ -37,10 +37,7 @@ const setupLocalization = () => {
   });
 };
 
-const registerPlugins = (app) => {
-  if (isDevelopment) {
-    app.register(fastifyErrorPage);
-  }
+const setUpPassport = (app) => {
   fastifyPassport.registerUserDeserializer((user) => app.objection.models.user.query()
     .findById(user.id));
   fastifyPassport.registerUserSerializer((user) => Promise.resolve(user));
@@ -53,6 +50,12 @@ const registerPlugins = (app) => {
       failureFlash: i18next.t('flash.authError'),
     },
   )(...args));
+};
+
+const registerPlugins = (app) => {
+  if (isDevelopment) {
+    app.register(fastifyErrorPage);
+  }
 
   app
     .register(i18nextMiddleware.plugin, { i18next })
@@ -60,9 +63,7 @@ const registerPlugins = (app) => {
     .register(fastifyFormbody)
     .register(fastifySecureSession, {
       key: fs.readFileSync(join(__dirname, '..', 'secret-key')),
-      cookie: {
-        path: '/',
-      },
+      cookie: { path: '/' },
     })
     .register(fastifyPassport.initialize())
     .register(fastifyPassport.secureSession())
@@ -115,7 +116,7 @@ export default () => {
   const app = fastify({ logger });
 
   setupLocalization();
-
+  setUpPassport(app);
   registerPlugins(app);
   setUpViews(app);
   setUpStaticAssets(app);
