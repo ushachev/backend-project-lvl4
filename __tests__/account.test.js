@@ -35,8 +35,6 @@ afterEach(async () => {
 describe('register new user', () => {
   const passwordValue = casual.password;
   const signUpData = {
-    firstName: casual.first_name,
-    lastName: casual.last_name,
     email: casual.email,
     password: passwordValue,
     repeatedPassword: passwordValue,

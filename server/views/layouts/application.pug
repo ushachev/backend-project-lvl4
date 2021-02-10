@@ -59,9 +59,10 @@ html(lang="ru")
 
         .bg-dark.p-3.pb-5.mb-n5
           - const { firstName, lastName } = reply.request.user;
+          - const userName = firstName ? `${firstName} ${lastName}` : reply.request.user.email
           .dropdowm.text-right
             a.dropdown-toggle.text-reset.text-decoration-none(data-toggle='dropdown', href='#', role='button', id='dropdownMenuLink', aria-haspopup='true', aria-expanded='false', data-offset='20, 20')
-              span= t('layouts.application.greeting', { firstName, lastName })
+              span= t('layouts.application.greeting', { userName })
             .dropdown-menu.dropdown-menu-right(aria-labelledby='dropdownMenuLink')
               a.dropdown-item(href=route('userAccount'))
                 +icon('user')

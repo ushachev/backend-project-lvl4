@@ -55,8 +55,8 @@ export default async (app) => {
     .delete('/user', { preValidation: app.authenticate }, async (request, reply) => {
       const { user } = request;
       try {
+        request.logOut();
         await user.$query().delete();
-        request.session.set('userId', null);
         request.flash('info', request.t('flash.users.delete.success', { account: user.email }));
         reply.redirect(app.reverse('root'));
 
