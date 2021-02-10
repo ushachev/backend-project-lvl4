@@ -19,6 +19,7 @@ Task management web application.
 
 ```sh
 $ make setup
+$ make secret
 ```
 
 ## Run

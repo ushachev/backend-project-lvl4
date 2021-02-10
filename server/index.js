@@ -1,6 +1,6 @@
 import { join } from 'path';
-import fs from 'fs';
 import fastify from 'fastify';
+import dotenv from 'dotenv';
 import autoLoad from 'fastify-autoload';
 import fastifyPassport from 'fastify-passport';
 import fastifyErrorPage from 'fastify-error-page';
@@ -22,6 +22,7 @@ import models from './models/index.js';
 import getHelpers from './helpers/index.js';
 import FormStrategy from './lib/passportStrategies/FormStrategy.js';
 
+dotenv.config();
 const mode = process.env.NODE_ENV || 'development';
 const isDevelopment = mode === 'development';
 const isTest = mode === 'test';
@@ -62,7 +63,7 @@ const registerPlugins = (app) => {
     .register(fastifyReverseRoutes.plugin)
     .register(fastifyFormbody)
     .register(fastifySecureSession, {
-      key: fs.readFileSync(join(__dirname, '..', 'secret-key')),
+      key: Buffer.from(process.env.COOKIE_KEY, 'hex'),
       cookie: { path: '/' },
     })
     .register(fastifyPassport.initialize())

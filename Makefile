@@ -25,4 +25,8 @@ migrate:
 migration:
 	npx knex --esm migrate:make ${name}
 
+secret:
+	npx secure-session-gen-key > secret-key
+	npx babel-node makeSecret.js
+
 .PHONY: install test
