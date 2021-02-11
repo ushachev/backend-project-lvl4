@@ -1,7 +1,7 @@
 include ../mixins/forms.pug
 include ../mixins/components.pug
 
-- const { t } = reply.request;
+- const { t, summary } = reply.request;
 
 doctype html
 html(lang="ru")
@@ -76,14 +76,14 @@ html(lang="ru")
 
         .container-fluid.px-0
           .row.justify-content-around.my-3.mx-n3
-            .col-12.col-md-5
+            .col-12.col-md-5.text-center
               .bg-dark
                 .card.border-0.p-3
-                  h4.display-5 виджет первый
-            .col-12.col-md-5
+                  span.h5= t('layouts.application.totalUsers', { count: summary.users })
+            .col-12.col-md-5.text-center
               .bg-dark
                 .card.border-0.p-3.mt-1.mt-md-0
-                  h4.display-5 виджет второй
+                  span.h5= t('layouts.application.totalTasks', { count: summary.tasks })
 
           block content
 

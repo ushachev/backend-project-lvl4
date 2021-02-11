@@ -88,6 +88,8 @@ export default {
         statuses: 'статусы',
         tags: 'метки',
         myTasks: 'мои задачи',
+        totalUsers: 'всего пользователей: {{count}}',
+        totalTasks: 'всего задач: {{count}}',
       },
     },
     views: {
