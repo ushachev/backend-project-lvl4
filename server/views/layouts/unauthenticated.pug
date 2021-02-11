@@ -10,8 +10,8 @@ html(lang="ru")
     meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
     link(href=getAssetPath('main.css'), rel='stylesheet')
     title Task manager
-  body.d-flex.flex-column.vh-100
-    nav.navbar.navbar-expand-lg.navbar-dark.bg-dark.m-3.mb-5
+  body.d-flex.flex-column.min-vh-100
+    nav.navbar.navbar-expand-lg.navbar-dark.bg-dark.m-3.mb-4.mb-md-5
       a.navbar-brand.text-monospace(href=route('root'))
         span task.
         span.text-primary manage
@@ -30,12 +30,12 @@ html(lang="ru")
               +icon('login')
               span.pl-2= t('layouts.unauthenticated.signIn')
 
-    main.container.mb-5
+    main.container.mb-4.mb-md-5
       - const flashes = reply.flash() || {}
       if Object.keys(flashes).length
         .fixed-top.mx-5.mt-5
           .row
-            .col-6.mx-auto
+            .col.col-md-6.mx-auto
               each messages, type in flashes
                 each message in messages
                   .alert.alert-dismissible.fade.show(class=`alert-${getAlertClass(type)}`, role='alert')= message
@@ -44,13 +44,13 @@ html(lang="ru")
 
       block content
 
-    footer.bg-dark.m-3.mt-auto.px-4.py-3
-      .row.justify-content-between
+    footer.bg-dark.m-3.mt-auto.px-2.px-md-4.py-3
+      .row
         .col-auto
           a.text-secondary.mr-3(href='https://github.com/ushachev/backend-project-lvl4', target='_blank')
             +icon('brand-github')
             span.ml-2= t('layouts.application.projectCode')
-        .col-auto
+        .col-auto.ml-auto
           copy= t('layouts.application.author')
 
     script(src=getAssetPath('main.js'))

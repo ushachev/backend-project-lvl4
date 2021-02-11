@@ -6,10 +6,10 @@ block content
       .bg-dark
         .card.border-0
           .card-body
-            h1.card-title= t('views.session.new.title')
-  .row
-    .col-5.mx-auto.bg-dark
-      form.p-5.mt-3(action=route('session'), method='post')
+            h1.h2.card-title= t('views.session.new.title')
+  .row.mx-0
+    .col.col-md-8.col-lg-5.mx-auto.bg-dark
+      form.px-1.px-md-3.px-lg-4.pt-5.pb-4.pb-md-5.mt-3(action=route('session'), method='post')
         fieldset.mb-4
           +input('email', `${t('views.session.new.email')}*`, 'mail', values)(type='email')
           +input('password', `${t('views.session.new.password')}*`, 'key')(type='password')

@@ -1,23 +1,24 @@
 extends ../layouts/unauthenticated.pug
 
 block content
-  .row.mb-n5
-    .col-auto.mr-auto.ml-5
+  .row.mb-n5.justify-content-center.justify-content-md-start
+    .col-10.col-md-auto.mr-md-auto.ml-0.ml-md-5
       .bg-dark
         .card.border-0
           .card-body
-            h1.display-4= t('views.welcome.index.title')
-  .jumbotron.mb-n5
-    p.lead.mt-4= t('views.welcome.index.description') 
+            h1.h2.text-center= t('views.welcome.index.title')
+  .jumbotron.py-5.mb-n5
+    p.lead.mt-4
+      span= t('views.welcome.index.description') 
       a.text-nowrap(href='https://ru.hexlet.io/professions/backend', target='_blank')= ` ${t('views.welcome.index.profession')}`
     p= t('views.welcome.index.platform')
       a(href='https://ru.hexlet.io', target='_blank')= ` ${t('views.welcome.index.link')}`
-  .row.mt-n5
-    .col-auto.ml-auto.mr-5
+  .row.justify-content-center.justify-content-md-start
+    .col-10.col-md-auto.ml-md-auto.mr-0.mr-md-5
       .bg-dark
         .card.border-0
           .card-body
-              h4.card-title= t('views.welcome.index.realized')
+              h4.card-title.text-center= t('views.welcome.index.realized')
               ul.list-group.list-group-flush
                 - 
                   const features = [
@@ -28,6 +29,5 @@ block content
                   ]
                 each feature in features
                   li.list-group-item
-                    .custom-control.custom-checkbox
-                      input.custom-control-input(type='checkbox', id='customCheck2', disabled='', checked='')
-                      label.custom-control-label(for='customCheck2')= feature
+                    +icon('checkbox')(class='text-primary')
+                    span.ml-2= feature

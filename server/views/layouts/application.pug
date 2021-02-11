@@ -50,14 +50,14 @@ html(lang="ru")
         if Object.keys(flashes).length
           .fixed-top.mx-5.mt-5
             .row
-              .col-6.mx-auto
+              .col.col-md-6.mx-auto
                 each messages, type in flashes
                   each message in messages
                     .alert.alert-dismissible.fade.show(class=`alert-${getAlertClass(type)}`, role='alert')= message
                       button.close(type='button', data-dismiss='alert', aria-label='Close')
                         span(aria-hidden='true') &times;
 
-        .bg-dark.p-3.pb-5.mb-n5
+        .bg-dark.p-3.pb-5.mb-n5.mx-n3.ml-md-0
           - const { firstName, lastName } = reply.request.user;
           - const userName = firstName ? `${firstName} ${lastName}` : reply.request.user.email
           .dropdowm.text-right
@@ -74,26 +74,26 @@ html(lang="ru")
                 +icon('logout')
                 span.pl-2= t('layouts.application.signOut')
 
-        .container-fluid
-          .row.justify-content-around.my-3
-            .col-5
+        .container-fluid.px-0
+          .row.justify-content-around.my-3.mx-n3
+            .col-12.col-md-5
               .bg-dark
                 .card.border-0.p-3
                   h4.display-5 виджет первый
-            .col-5
+            .col-12.col-md-5
               .bg-dark
-                .card.border-0.p-3
+                .card.border-0.p-3.mt-1.mt-md-0
                   h4.display-5 виджет второй
 
           block content
 
-    footer.bg-dark.m-3.mt-auto.px-4.py-3
-      .row.justify-content-between
+    footer.bg-dark.m-3.mt-auto.px-2.px-md-4.py-3
+      .row
         .col-auto
           a.text-secondary.mr-3(href='https://github.com/ushachev/backend-project-lvl4', target='_blank')
             +icon('brand-github')
             span.ml-2= t('layouts.application.projectCode')
-        .col-auto
+        .col-auto.ml-auto
           copy= t('layouts.application.author')
 
     script(src=getAssetPath('main.js'))
