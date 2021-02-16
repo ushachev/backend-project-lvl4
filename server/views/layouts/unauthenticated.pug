@@ -20,12 +20,12 @@ html(lang="ru")
         span.navbar-toggler-icon
       #navbarNav.collapse.navbar-collapse
         ul.navbar-nav.ml-auto
-          - const { routerPath } = reply.request;
-          li.nav-item(class=(routerPath === route('newUser') && 'active'))
+          - const { url } = reply.request;
+          li.nav-item(class=(url === route('newUser') && 'active'))
             a.nav-link(href=route('newUser'))
               +icon('user-plus')
               span.pl-2= t('layouts.unauthenticated.signUp')
-          li.nav-item.ml-lg-3(class=(routerPath === route('newSession') && 'active'))
+          li.nav-item.ml-lg-3(class=(url === route('newSession') && 'active'))
             a.nav-link(href=route('newSession'))
               +icon('login')
               span.pl-2= t('layouts.unauthenticated.signIn')

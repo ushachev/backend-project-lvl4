@@ -45,7 +45,9 @@ export default async (app) => {
         ? filteredTasks.filter(filterByLabel)
         : filteredTasks;
 
-      reply.render('tasks/index', { tasks, ...taskRelatedData, query });
+      reply.render('tasks/index', {
+        tasks, ...taskRelatedData, query, activNavItem: 'tasks',
+      });
 
       return reply;
     })
