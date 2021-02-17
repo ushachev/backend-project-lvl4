@@ -2,7 +2,7 @@ import casual from 'casual';
 import formAutoContent from 'form-auto-content';
 import getApp from '../server/index.js';
 import authenticateUser from './helpers/authentication.js';
-import testData from './helpers/testData.js';
+import testData from '../__fixtures__/testData.js';
 import encrypt from '../server/lib/secure.js';
 
 const { users: [defaultUser] } = testData;
@@ -59,10 +59,10 @@ describe('register new user', () => {
       url: app.reverse('users'),
       ...formAutoContent({ ...signUpData, repeatedPassword: '' }),
     });
-    const expectedHtml = '<div class="invalid-feedback">должно совпадать с паролем</div>';
+    const expectedErrorText = 'должно совпадать с паролем';
 
     expect(response.statusCode).toBe(422);
-    expect(response.body).toEqual(expect.stringContaining(expectedHtml));
+    expect(response.body).toEqual(expect.stringContaining(expectedErrorText));
   });
 });
 

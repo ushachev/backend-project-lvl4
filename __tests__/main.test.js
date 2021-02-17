@@ -3,7 +3,7 @@ import formAutoContent from 'form-auto-content';
 import getApp from '../server/index.js';
 import authenticateUser from './helpers/authentication.js';
 import getTaskIdsFromHtml from './helpers/parseHtml.js';
-import testData from './helpers/testData.js';
+import testData from '../__fixtures__/testData.js';
 
 const { users: [defaultUser] } = testData;
 
