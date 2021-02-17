@@ -1,31 +1,35 @@
+import { isEmpty } from 'lodash';
+
 export default async (app) => {
+  const { models } = app.objection;
+
   app
     .get('/statuses', { name: 'statuses', preValidation: app.authenticate }, async (request, reply) => {
-      const statuses = await app.objection.models.status.query();
+      const statuses = await models.status.query();
       reply.render('statuses/index', { statuses });
       return reply;
     })
     .get('/statuses/:id/edit', { preValidation: app.authenticate }, async (request, reply) => {
-      const status = await app.objection.models.status.query().findById(request.params.id);
+      const status = await models.status.query().findById(request.params.id);
       reply.render('statuses/edit', { values: status });
       return reply;
     })
     .post('/statuses', { preValidation: app.authenticate }, async (request, reply) => {
       try {
-        const status = await app.objection.models.status.fromJson(request.body);
-        await app.objection.models.status.query().insert(status);
+        const status = await models.status.fromJson(request.body);
+        await models.status.query().insert(status);
         request.flash('info', request.t('flash.statuses.create.success', { ...request.body }));
         reply.redirect(app.reverse('statuses'));
 
         return reply;
       } catch ({ data }) {
-        const statuses = await app.objection.models.status.query();
+        const statuses = await models.status.query();
         reply.code(422).render('statuses/index', { statuses, values: request.body, errors: data });
         return reply;
       }
     })
     .patch('/statuses/:id', { preValidation: app.authenticate }, async (request, reply) => {
-      const status = await app.objection.models.status.query().findById(request.params.id);
+      const status = await models.status.query().findById(request.params.id);
 
       try {
         const newName = request.body.name;
@@ -44,23 +48,22 @@ export default async (app) => {
       }
     })
     .delete('/statuses/:id', { preValidation: app.authenticate }, async (request, reply) => {
-      try {
-        const status = await app.objection.models.status.query().findById(request.params.id);
+      const status = await models.status.query().findById(request.params.id)
+        .withGraphJoined('[tasks]');
+
+      if (isEmpty(status.tasks)) {
         await status.$query().delete();
         request.flash('info', request.t('flash.statuses.delete.success', { name: status.name }));
         reply.redirect(app.reverse('statuses'));
 
         return reply;
-      } catch (error) {
-        if (error.name !== 'ForeignKeyViolationError') {
-          throw error;
-        }
-        const statuses = await app.objection.models.status.query();
-
-        request.flash('error', request.t('flash.statuses.delete.error'));
-        reply.code(422).render('statuses/index', { statuses });
-
-        return reply;
       }
+
+      const statuses = await models.status.query();
+
+      request.flash('error', request.t('flash.statuses.delete.error'));
+      reply.code(422).render('statuses/index', { statuses });
+
+      return reply;
     });
 };

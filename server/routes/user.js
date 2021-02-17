@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash';
 import getValidator from '../lib/validators.js';
 import encrypt from '../lib/secure.js';
 
@@ -54,22 +55,21 @@ export default async (app) => {
     )
     .delete('/user', { preValidation: app.authenticate }, async (request, reply) => {
       const { user } = request;
-      try {
-        request.logOut();
-        await user.$query().delete();
-        request.flash('info', request.t('flash.users.delete.success', { account: user.email }));
-        reply.redirect(app.reverse('root'));
+      const { createdTasks, executedTasks } = await user.$query()
+        .withGraphJoined('[createdTasks, executedTasks]');
 
-        return reply;
-      } catch (error) {
-        if (error.name !== 'ForeignKeyViolationError') {
-          throw error;
-        }
-
+      if (!isEmpty(createdTasks) || !isEmpty(executedTasks)) {
         request.flash('error', request.t('flash.users.delete.error'));
         reply.code(422).render('users/edit');
 
         return reply;
       }
+
+      request.logOut();
+      await user.$query().delete();
+      request.flash('info', request.t('flash.users.delete.success', { account: user.email }));
+      reply.redirect(app.reverse('root'));
+
+      return reply;
     });
 };
