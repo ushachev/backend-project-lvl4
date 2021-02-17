@@ -12,5 +12,6 @@ try {
   fs.rmSync(secretPath);
   console.log(`The COOKIE_KEY was appended to ${envPath}`);
 } catch (err) {
-  console.log('Error while appending COOKIE_KEY:', err);
+  console.error('Error while appending COOKIE_KEY:', err);
+  process.exit(1);
 }
