@@ -29,7 +29,7 @@ block content
                 select.form-control(name='executor', id='data_executor')
                   option
                   each user in users
-                    option(value= user.id, selected= (query.executor == user.id))= user.fullName
+                    option(value= user.id, selected= (query.executor == user.id))= user.toJSON().fullName
             .col-12.col-sm-4
               .form-group
                 label(for='data_label')= t('views.tasks.index.label')
@@ -65,8 +65,8 @@ block content
                   a(href=route('task', { id: task.id }))
                     span= task.name
                 td= task.status.name
-                td= task.creator.fullName
-                td= task.executor ? task.executor.fullName : t('views.tasks.index.notAssigned')
+                td= task.creator.toJSON().fullName
+                td= task.executor ? task.executor.toJSON().fullName : t('views.tasks.index.notAssigned')
                 td= formatDate(task.createdAt)
                 td.text-right
                   a(href=route('editTask', { id: task.id }), data-toggle='tooltip', data-placement='auto', title=t('views.tasks.index.change'))

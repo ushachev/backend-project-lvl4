@@ -58,11 +58,10 @@ html(lang="ru")
                         span(aria-hidden='true') &times;
 
         .bg-dark.p-3.pb-5.mb-n5.mx-n3.ml-md-0
-          - const { firstName, lastName } = reply.request.user;
-          - const userName = firstName ? `${firstName} ${lastName}` : reply.request.user.email
+          - const { fullName } = reply.request.user.toJSON();
           .dropdowm.text-right
             a.dropdown-toggle.text-reset.text-decoration-none(data-toggle='dropdown', href='#', role='button', id='dropdownMenuLink', aria-haspopup='true', aria-expanded='false', data-offset='20, 20')
-              span= t('layouts.application.greeting', { userName })
+              span= t('layouts.application.greeting', { fullName })
             .dropdown-menu.dropdown-menu-right(aria-labelledby='dropdownMenuLink')
               a.dropdown-item(href=route('userAccount'))
                 +icon('user')

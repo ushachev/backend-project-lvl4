@@ -1,10 +1,8 @@
-import objection from 'objection';
 import objectionUnique from 'objection-unique';
 import BaseModel from './BaseModel.js';
 import encrypt from '../lib/secure.js';
 
 const unique = objectionUnique({ fields: ['email'] });
-const { raw } = objection;
 
 export default class User extends unique(BaseModel) {
   static get tableName() {
@@ -25,10 +23,18 @@ export default class User extends unique(BaseModel) {
     };
   }
 
+  static get virtualAttributes() {
+    return ['fullName'];
+  }
+
+  fullName() {
+    return this.firstName ? `${this.firstName} ${this.lastName}` : this.email;
+  }
+
   static get modifiers() {
     return {
       defaultSelects(query) {
-        query.select('id', raw('?? || ? || ??', 'firstName', ' ', 'lastName').as('fullName'));
+        query.select('id', 'firstName', 'lastName');
       },
     };
   }

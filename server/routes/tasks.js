@@ -11,7 +11,7 @@ export default async (app) => {
   };
 
   const getTaskRelatedData = async () => {
-    const users = await models.user.query().modify('defaultSelects');
+    const users = await models.user.query();
     const statuses = await models.status.query();
     const labels = await models.label.query();
 

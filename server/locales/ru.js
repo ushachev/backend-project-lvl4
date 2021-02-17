@@ -80,7 +80,7 @@ export default {
       application: {
         author: 'ushachev, 2020',
         projectCode: 'код проекта',
-        greeting: 'приветствуем, {{userName}}',
+        greeting: 'приветствуем, {{fullName}}',
         account: 'аккаунт',
         signOut: 'выйти',
         users: 'пользователи',

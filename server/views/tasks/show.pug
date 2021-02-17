@@ -10,9 +10,9 @@ block content
         li.list-group-item.active
           p.lead= task.name
         li.list-group-item= `${t('views.tasks.show.author')}: `
-          span= task.creator.fullName
+          span= task.creator.toJSON().fullName
         li.list-group-item= `${t('views.tasks.show.executor')}: `
-          span= task.executor ? task.executor.fullName : t('views.tasks.show.notAssigned')
+          span= task.executor ? task.executor.toJSON().fullName : t('views.tasks.show.notAssigned')
         li.list-group-item= `${t('views.tasks.show.status')}: `
           span= task.status.name
         li.list-group-item= `${t('views.tasks.show.labels')}:`

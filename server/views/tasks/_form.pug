@@ -7,7 +7,7 @@
   select.form-control(name='executorId', id='executor')
     option
     each user in users
-      option(value= user.id, selected= (values.executorId === user.id))= user.fullName
+      option(value= user.id, selected= (values.executorId === user.id))= user.toJSON().fullName
 .form-row.mb-4
   .form-group.col-6
     - const statusErrors = errors['statusId'];
