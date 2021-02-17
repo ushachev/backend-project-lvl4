@@ -15,7 +15,7 @@ block content
               +input('name', null, null, values, errors)
             .col-12.col-sm-4
               +submit(t('views.statuses.index.submit'))(class='btn-block')
-  if statuses.length > 0
+  if !isEmpty(statuses)
     .row
       .col.overflow-auto
         table.table.table-striped.table-hover
@@ -32,9 +32,9 @@ block content
                 td= status.name 
                 td= formatDate(status.createdAt)
                 td.text-right
-                  a(href=`/statuses/${status.id}/edit`, data-toggle='tooltip', data-placement='auto', title=t('views.statuses.index.change'))
+                  a(href=route('editStatus', { id: status.id }), data-toggle='tooltip', data-placement='auto', title=t('views.statuses.index.change'))
                     +icon('pencil')
-                  form.d-inline(action=`/statuses/${status.id}`, method='post')
+                  form.d-inline(action=route('status', { id: status.id }), method='post')
                     +overrideInput('delete')
                     button.btn.btn-link.py-0(type='submit', data-toggle='tooltip', data-placement='auto', title=t('views.statuses.index.delete'))
                       +icon('x')

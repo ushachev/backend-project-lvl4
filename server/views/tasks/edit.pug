@@ -4,7 +4,7 @@ block content
   .row.justify-content-center.pb-3
     .col.col-sm-8
       .h4.text-center= t('views.tasks.edit.title')
-      form(action=`/tasks/${values.id}`, method='post')
+      form(action=route('task', { id: values.id }), method='post')
         +overrideInput('patch')
         include _form.pug
         +submit(t('views.tasks.edit.submit'))(class='btn-block')

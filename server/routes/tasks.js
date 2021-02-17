@@ -51,7 +51,7 @@ export default async (app) => {
 
       return reply;
     })
-    .get('/tasks/:id', { preValidation: app.authenticate }, async (request, reply) => {
+    .get('/tasks/:id', { name: 'task', preValidation: app.authenticate }, async (request, reply) => {
       const task = await getTaskData(request.params.id);
       reply.render('tasks/show', { task });
 
@@ -63,15 +63,19 @@ export default async (app) => {
 
       return reply;
     })
-    .get('/tasks/:id/edit', { preValidation: app.authenticate }, async (request, reply) => {
-      const values = await getTaskData(request.params.id);
-      values.labelIds = values.labels.map(({ id }) => id);
-      const taskRelatedData = await getTaskRelatedData();
+    .get(
+      '/tasks/:id/edit',
+      { name: 'editTask', preValidation: app.authenticate },
+      async (request, reply) => {
+        const values = await getTaskData(request.params.id);
+        values.labelIds = values.labels.map(({ id }) => id);
+        const taskRelatedData = await getTaskRelatedData();
 
-      reply.render('tasks/edit', { ...taskRelatedData, values, errors: {} });
+        reply.render('tasks/edit', { ...taskRelatedData, values, errors: {} });
 
-      return reply;
-    })
+        return reply;
+      },
+    )
     .post('/tasks', { preValidation: app.authenticate }, async (request, reply) => {
       const { labelIds, ...taskData } = normalizeTaskInputData(request.body);
 

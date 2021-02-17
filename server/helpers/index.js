@@ -8,7 +8,7 @@ const alertClasses = {
 };
 
 export default (app) => ({
-  route: (name) => app.reverse(name),
+  route: (name, args = {}) => app.reverse(name, args),
   getInputErrorMessage: (errors) => errors
     .map(({ message, keyword, params }) => i18next
       .t(`inputErrors.${keyword}`, message, { count: params?.limit }))

@@ -10,112 +10,122 @@ let cookie;
 const routesRequiredSignOut = [
   {
     method: 'GET',
-    url: '/users/new',
+    name: 'newUser',
   },
   {
     method: 'GET',
-    url: '/session/new',
+    name: 'newSession',
   },
   {
     method: 'POST',
-    url: '/users',
+    name: 'users',
   },
 ];
 
 const userRoutes = [
   {
     method: 'GET',
-    url: '/users',
+    name: 'users',
   },
   {
     method: 'GET',
-    url: '/user',
+    name: 'userAccount',
   },
   {
     method: 'PATCH',
-    url: '/user/profile',
+    name: 'userProfile',
   },
   {
     method: 'PATCH',
-    url: '/user/password',
+    name: 'userPassword',
   },
   {
     method: 'DELETE',
-    url: '/user',
+    name: 'userAccount',
   },
 ];
 const statusRoutes = [
   {
     method: 'GET',
-    url: '/statuses',
+    name: 'statuses',
   },
   {
     method: 'GET',
-    url: '/statuses/1/edit',
+    name: 'editStatus',
+    args: { id: 1 },
   },
   {
     method: 'POST',
-    url: '/statuses',
+    name: 'statuses',
   },
   {
     method: 'PATCH',
-    url: '/statuses/1',
+    name: 'status',
+    args: { id: 1 },
   },
   {
     method: 'DELETE',
-    url: '/statuses/1',
+    name: 'status',
+    args: { id: 1 },
   },
 ];
 const taskRoutes = [
   {
     method: 'GET',
-    url: '/tasks',
+    name: 'tasks',
   },
   {
     method: 'GET',
-    url: '/tasks/new',
+    name: 'newTask',
   },
   {
     method: 'POST',
-    url: '/tasks',
+    name: 'tasks',
   },
   {
     method: 'GET',
-    url: '/tasks/1',
+    name: 'task',
+    args: { id: 1 },
   },
   {
     method: 'GET',
-    url: '/tasks/1/edit',
+    name: 'editTask',
+    args: { id: 1 },
   },
   {
     method: 'PATCH',
-    url: '/tasks/1',
+    name: 'task',
+    args: { id: 1 },
   },
   {
     method: 'DELETE',
-    url: '/tasks/1',
+    name: 'task',
+    args: { id: 1 },
   },
 ];
 const labelRoutes = [
   {
     method: 'GET',
-    url: '/labels',
+    name: 'labels',
   },
   {
     method: 'GET',
-    url: '/labels/1/edit',
+    name: 'editLabel',
+    args: { id: 1 },
   },
   {
     method: 'POST',
-    url: '/labels',
+    name: 'labels',
   },
   {
     method: 'PATCH',
-    url: '/labels/1',
+    name: 'label',
+    args: { id: 1 },
   },
   {
     method: 'DELETE',
-    url: '/labels/1',
+    name: 'label',
+    args: { id: 1 },
   },
 ];
 
@@ -139,25 +149,39 @@ afterAll(async () => {
 });
 
 test.each(routesRequiredSignOut)('%O', async (route) => {
-  const signInResponse = await app.inject({ ...route, cookies: cookie });
+  const signInResponse = await app.inject({
+    method: route.method,
+    url: app.reverse(route.name),
+    cookies: cookie,
+  });
 
   expect(signInResponse.statusCode).toBe(302);
   expect(signInResponse.headers.location).toBe(app.reverse('root'));
 
   if (route.method === 'GET') {
-    const responseSignedOut = await app.inject(route);
+    const responseSignedOut = await app.inject({
+      method: route.method,
+      url: app.reverse(route.name),
+    });
     expect(responseSignedOut.statusCode).toBe(200);
   }
 });
 
 test.each(routesRequiredSignIn)('%O', async (route) => {
-  const signOutResponse = await app.inject(route);
+  const signOutResponse = await app.inject({
+    method: route.method,
+    url: app.reverse(route.name, route.args),
+  });
 
   expect(signOutResponse.statusCode).toBe(302);
   expect(signOutResponse.headers.location).toBe(app.reverse('root'));
 
   if (route.method === 'GET') {
-    const responseSignedIn = await app.inject({ ...route, cookies: cookie });
+    const responseSignedIn = await app.inject({
+      method: route.method,
+      url: app.reverse(route.name, route.args),
+      cookies: cookie,
+    });
     expect(responseSignedIn.statusCode).toBe(200);
   }
 });

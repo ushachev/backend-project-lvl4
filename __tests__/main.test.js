@@ -77,7 +77,7 @@ describe('update task', () => {
     const { tasks: [task] } = testData;
     const response = await app.inject({
       method: 'PATCH',
-      url: `${app.reverse('tasks')}/1`,
+      url: app.reverse('task', { id: 1 }),
       ...formAutoContent({ name: task.name, statusId: '2' }),
       cookies: cookie,
     });
@@ -91,7 +91,7 @@ describe('update task', () => {
   test('update task with invalid data', async () => {
     const response = await app.inject({
       method: 'PATCH',
-      url: `${app.reverse('tasks')}/1`,
+      url: app.reverse('task', { id: 1 }),
       ...formAutoContent({ name: '', statusId: '1' }),
       cookies: cookie,
     });
@@ -103,7 +103,7 @@ describe('update task', () => {
     const { tasks: [task] } = testData;
     const response = await app.inject({
       method: 'PATCH',
-      url: `${app.reverse('tasks')}/1`,
+      url: app.reverse('task', { id: 1 }),
       ...formAutoContent({ name: task.name, statusId: '10' }),
       cookies: cookie,
     });
@@ -118,7 +118,7 @@ describe('delete task', () => {
     const taskAuthorCookie = await authenticateUser(app, taskAuthor);
     const response = await app.inject({
       method: 'DELETE',
-      url: `${app.reverse('tasks')}/1`,
+      url: app.reverse('task', { id: 1 }),
       cookies: taskAuthorCookie,
     });
     const tasks = await models.task.query();
@@ -135,7 +135,7 @@ describe('delete task', () => {
   test('delete task under unauthorized account', async () => {
     const response = await app.inject({
       method: 'DELETE',
-      url: `${app.reverse('tasks')}/2`,
+      url: app.reverse('task', { id: 2 }),
       cookies: cookie,
     });
 
@@ -146,7 +146,7 @@ describe('delete task', () => {
 test('filter tasks', async () => {
   const filterResponse1 = await app.inject({
     method: 'GET',
-    url: '/tasks',
+    url: app.reverse('tasks'),
     query: {
       status: '2',
       executor: '3',
@@ -161,7 +161,7 @@ test('filter tasks', async () => {
 
   const filterResponse2 = await app.inject({
     method: 'GET',
-    url: '/tasks',
+    url: app.reverse('tasks'),
     query: {
       status: '3',
       executor: '2',
@@ -175,7 +175,7 @@ test('filter tasks', async () => {
 
   const filterResponse3 = await app.inject({
     method: 'GET',
-    url: '/tasks',
+    url: app.reverse('tasks'),
     query: {
       label: '3',
     },
@@ -189,7 +189,7 @@ test('filter tasks', async () => {
   const creatorCookie = await authenticateUser(app, taskCreator);
   const filterResponse4 = await app.inject({
     method: 'GET',
-    url: '/tasks',
+    url: app.reverse('tasks'),
     query: {
       label: '3',
       isCreatorUser: 'on',

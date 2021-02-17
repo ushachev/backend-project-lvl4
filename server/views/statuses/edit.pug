@@ -6,7 +6,7 @@ block content
       .h4= t('views.statuses.edit.status')
   .row
     .col
-      form(action=`/statuses/${values.id}`, method='post')
+      form(action=route('status', { id: values.id }), method='post')
         +overrideInput('patch')
         .form-row
           .col-12.col-sm-8

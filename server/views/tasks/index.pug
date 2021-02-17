@@ -1,7 +1,7 @@
 extends ../layouts/application.pug
 
 block content
-  - const isQueried = Object.keys(query).length > 0
+  - const isQueried = !isEmpty(query)
   .row.mb-2
     .col-auto.d-flex.align-items-center
       a.pl-3(href=route('newTask'))
@@ -44,7 +44,7 @@ block content
                   label.custom-control-label(for='data_isCreatorUser')= t('views.tasks.index.onlyMyTasks')
             .col-12.col-sm-4
               +submit(t('views.tasks.index.submit'))(class='btn-block')
-  if tasks.length > 0
+  if !isEmpty(tasks)
     .row
       .col.overflow-auto
         table.table.table-striped.table-hover
@@ -62,14 +62,14 @@ block content
               tr
                 td= task.id
                 td
-                  a(href=`/tasks/${task.id}`)
+                  a(href=route('task', { id: task.id }))
                     span= task.name
                 td= task.status.name
                 td= task.creator.fullName
                 td= task.executor ? task.executor.fullName : t('views.tasks.index.notAssigned')
                 td= formatDate(task.createdAt)
                 td.text-right
-                  a(href=`/tasks/${task.id}/edit`, data-toggle='tooltip', data-placement='auto', title=t('views.tasks.index.change'))
+                  a(href=route('editTask', { id: task.id }), data-toggle='tooltip', data-placement='auto', title=t('views.tasks.index.change'))
                     +icon('pencil')
   else
     .row

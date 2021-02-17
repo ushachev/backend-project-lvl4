@@ -64,7 +64,7 @@ describe('update label', () => {
     const newLabelName = casual.title;
     const response = await app.inject({
       method: 'PATCH',
-      url: `${app.reverse('labels')}/1`,
+      url: app.reverse('label', { id: 1 }),
       ...formAutoContent({ name: newLabelName }),
       cookies: cookie,
     });
@@ -78,7 +78,7 @@ describe('update label', () => {
   test('update label with invalid data', async () => {
     const response = await app.inject({
       method: 'PATCH',
-      url: `${app.reverse('labels')}/1`,
+      url: app.reverse('label', { id: 1 }),
       ...formAutoContent({ name: '' }),
       cookies: cookie,
     });
@@ -92,7 +92,7 @@ describe('delete label', () => {
     const { labels: [deletingLabel] } = testData;
     const response = await app.inject({
       method: 'DELETE',
-      url: `${app.reverse('labels')}/1`,
+      url: app.reverse('label', { id: 1 }),
       cookies: cookie,
     });
     const labels = await models.label.query();
@@ -109,7 +109,7 @@ describe('delete label', () => {
   test('delete related label', async () => {
     const response = await app.inject({
       method: 'DELETE',
-      url: `${app.reverse('labels')}/2`,
+      url: app.reverse('label', { id: 2 }),
       cookies: cookie,
     });
 

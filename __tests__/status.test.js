@@ -64,7 +64,7 @@ describe('update task status', () => {
     const newStatusName = casual.title;
     const response = await app.inject({
       method: 'PATCH',
-      url: `${app.reverse('statuses')}/1`,
+      url: app.reverse('status', { id: 1 }),
       ...formAutoContent({ name: newStatusName }),
       cookies: cookie,
     });
@@ -78,7 +78,7 @@ describe('update task status', () => {
   test('update status with invalid data', async () => {
     const response = await app.inject({
       method: 'PATCH',
-      url: `${app.reverse('statuses')}/1`,
+      url: app.reverse('status', { id: 1 }),
       ...formAutoContent({ name: '' }),
       cookies: cookie,
     });
@@ -92,7 +92,7 @@ describe('delete task status', () => {
     const { statuses: [deletingStatus] } = testData;
     const response = await app.inject({
       method: 'DELETE',
-      url: `${app.reverse('statuses')}/1`,
+      url: app.reverse('status', { id: 1 }),
       cookies: cookie,
     });
     const statuses = await models.status.query();
@@ -109,7 +109,7 @@ describe('delete task status', () => {
   test('delete related status', async () => {
     const response = await app.inject({
       method: 'DELETE',
-      url: `${app.reverse('statuses')}/2`,
+      url: app.reverse('status', { id: 2 }),
       cookies: cookie,
     });
 

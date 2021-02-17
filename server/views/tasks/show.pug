@@ -16,14 +16,14 @@ block content
         li.list-group-item= `${t('views.tasks.show.status')}: `
           span= task.status.name
         li.list-group-item= `${t('views.tasks.show.labels')}:`
-          if task.labels.length
+          if !isEmpty(task.labels)
             each label in task.labels
               span= ` #${label.name}`
           else
             span= ` ${t('views.tasks.show.withoutLabels')}`
         li.list-group-item= `${t('views.tasks.show.createdAt')}: `
           span= formatDate(task.createdAt)
-        a.d-none.d-md-block.list-group-item.list-group-item-action.text-success(href=`/tasks/${task.id}/edit`)= t('views.tasks.show.change')
+        a.d-none.d-md-block.list-group-item.list-group-item-action.text-success(href=route('editTask', { id: task.id }))= t('views.tasks.show.change')
         button.d-none.d-md-block.list-group-item.list-group-item-action.text-danger(type='button', data-toggle='modal', data-target='#deleteTaskModal')= t('views.tasks.show.deleteTask')
     .col.col-md-8.border-left.border-dark
       ul.list-group.list-group-flush
@@ -31,7 +31,7 @@ block content
           p.lead= `${t('views.tasks.show.description')}: `
         li.list-group-item.border-bottom.border-dark
           pre= task.description
-        a.d-block.d-md-none.list-group-item.list-group-item-action.text-success(href=`/tasks/${task.id}/edit`)= t('views.tasks.show.change')
+        a.d-block.d-md-none.list-group-item.list-group-item-action.text-success(href=route('editTask', { id: task.id }))= t('views.tasks.show.change')
         button.d-block.d-md-none.list-group-item.list-group-item-action.text-danger(type='button', data-toggle='modal', data-target='#deleteTaskModal')= t('views.tasks.show.deleteTask')
   .modal.fade(id='deleteTaskModal', tabindex='-1', aria-labelledby='deleteTaskModalLabel', aria-hidden='true')
     .modal-dialog
@@ -43,6 +43,6 @@ block content
         .modal-body
           .text-center= t('views.tasks.show.deletionWarning')
         .modal-footer
-          form(action=`/tasks/${task.id}`, method='post')
+          form(action=route('task', { id: task.id }), method='post')
             +overrideInput('delete')
             +submit(t('views.tasks.show.submitDel'))(class='btn-danger')
