@@ -1,5 +1,5 @@
 import i18next from 'i18next';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 
 const alertClasses = {
   error: 'danger',
@@ -18,4 +18,5 @@ export default (app) => ({
     const date = new Date(`${str} GMT`);
     return date.toLocaleString();
   },
+  isEmpty,
 });

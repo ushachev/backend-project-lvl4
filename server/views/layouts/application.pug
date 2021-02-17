@@ -47,7 +47,7 @@ html(lang="ru")
 
       main.container-fluid
         - const flashes = reply.flash() || {}
-        if Object.keys(flashes).length
+        if !isEmpty(flashes)
           .fixed-top.mx-5.mt-5
             .row
               .col.col-md-6.mx-auto
