@@ -21,8 +21,8 @@ export default class Status extends unique(BaseModel) {
 
   static get modifiers() {
     return {
-      defaultSelects(query) {
-        query.select('id', 'name');
+      defaultSelects(builder) {
+        builder.select('id', 'name');
       },
     };
   }

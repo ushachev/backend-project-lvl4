@@ -21,10 +21,10 @@ export default class Task extends BaseModel {
   }
 
   static get modifiers() {
+    const { ref } = Task;
     return {
-      defaultSelects(query) {
-        const { ref } = Task;
-        query.select(
+      defaultSelects(builder) {
+        builder.select(
           ref('id'),
           ref('name'),
           'description',
@@ -33,6 +33,21 @@ export default class Task extends BaseModel {
           'creatorId',
           ref('createdAt'),
         );
+      },
+      indexSelects(builder) {
+        builder.select(ref('id'), ref('name'), ref('createdAt'));
+      },
+      findByFilterQuery(builder, query, creatorId) {
+        const mapper = {
+          status: { 'status.id': query.status },
+          executor: { 'executor.id': query.executor },
+          isCreatorUser: { 'creator.id': creatorId },
+          label: { 'labels.id': query.label },
+        };
+        const filter = Object.entries(query)
+          .reduce((acc, [key, value]) => (value ? { ...acc, ...mapper[key] } : acc), {});
+
+        builder.where(filter);
       },
     };
   }

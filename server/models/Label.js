@@ -21,11 +21,8 @@ export default class Label extends unique(BaseModel) {
 
   static get modifiers() {
     return {
-      defaultSelects(query) {
-        query.select('id', 'name');
-      },
-      selectId(query) {
-        query.select('id');
+      defaultSelects(builder) {
+        builder.select('id', 'name');
       },
     };
   }

@@ -30,20 +30,11 @@ export default async (app) => {
     .get('/tasks', { name: 'tasks', preValidation: app.authenticate }, async (request, reply) => {
       const { query } = request;
       const taskRelatedData = await getTaskRelatedData();
-      const filteredTasks = await models.task.query()
-        .modify('defaultSelects')
-        .withGraphJoined('[status, creator, executor, labels(selectId)]')
-        .modifyGraph('[status, creator, executor]', 'defaultSelects')
-        .where(query.isCreatorUser ? { 'creator.id': request.user.id } : {})
-        .where(query.status ? { 'status.id': Number(query.status) } : {})
-        .where(query.executor ? { 'executor.id': Number(query.executor) } : {});
-
-      const filterByLabel = (task) => task.labels
-        .map(({ id }) => id)
-        .includes(Number(query.label));
-      const tasks = query.label
-        ? filteredTasks.filter(filterByLabel)
-        : filteredTasks;
+      const tasks = await models.task.query()
+        .modify('indexSelects')
+        .withGraphJoined('[status, creator, executor, labels]')
+        .modifyGraph('[status, creator, executor, labels]', 'defaultSelects')
+        .modify('findByFilterQuery', query, request.user.id);
 
       reply.render('tasks/index', {
         tasks, ...taskRelatedData, query, activNavItem: 'tasks',

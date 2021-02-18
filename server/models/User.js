@@ -33,8 +33,8 @@ export default class User extends unique(BaseModel) {
 
   static get modifiers() {
     return {
-      defaultSelects(query) {
-        query.select('id', 'firstName', 'lastName');
+      defaultSelects(builder) {
+        builder.select('id', 'firstName', 'lastName');
       },
     };
   }
