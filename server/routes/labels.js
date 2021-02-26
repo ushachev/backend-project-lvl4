@@ -56,21 +56,19 @@ export default async (app) => {
       },
     )
     .delete('/labels/:id', { preValidation: app.authenticate }, async (request, reply) => {
-      const label = await models.label.query().findById(request.params.id)
-        .withGraphJoined('[tasks]');
+      const label = await models.label.query().findById(request.params.id);
+      const tasks = await label.$relatedQuery('tasks');
 
-      if (isEmpty(label.tasks)) {
-        await label.$query().delete();
-        request.flash('info', request.t('flash.labels.delete.success', { name: label.name }));
+      if (!isEmpty(tasks)) {
+        request.flash('error', request.t('flash.labels.delete.error'));
         reply.redirect(app.reverse('labels'));
 
         return reply;
       }
 
-      const labels = await models.label.query();
-
-      request.flash('error', request.t('flash.labels.delete.error'));
-      reply.code(422).render('labels/index', { labels });
+      await label.$query().delete();
+      request.flash('info', request.t('flash.labels.delete.success', { name: label.name }));
+      reply.redirect(app.reverse('labels'));
 
       return reply;
     });

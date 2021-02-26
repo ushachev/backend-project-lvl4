@@ -57,7 +57,8 @@ export default async (app) => {
     )
     .delete('/statuses/:id', { preValidation: app.authenticate }, async (request, reply) => {
       const status = await models.status.query().findById(request.params.id)
-        .withGraphJoined('[tasks]');
+        .withGraphJoined('[tasks]').debug();
+      request.log.info({ status }, 'status selected for deletion');
 
       if (isEmpty(status.tasks)) {
         await status.$query().delete();

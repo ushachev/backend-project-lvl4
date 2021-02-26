@@ -113,6 +113,12 @@ describe('delete label', () => {
       cookies: cookie,
     });
 
-    expect(response.statusCode).toBe(422);
+    const labels = await models.label.query();
+    const actualLabelNames = labels.map(({ name }) => name);
+    const expectedLabelNames = testData.labels.map(({ name }) => name);
+
+    expect(response.statusCode).toBe(302);
+    expect(response.headers.location).toBe(app.reverse('labels'));
+    expect(actualLabelNames).toEqual(expectedLabelNames);
   });
 });
