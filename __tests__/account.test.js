@@ -83,9 +83,9 @@ describe('sign in / sign out user', () => {
       url: app.reverse('root'),
       headers: { cookie: cookieHeader },
     });
-    const expectedHtml = `<span>приветствуем, ${user.firstName} ${user.lastName}</span>`;
+    const expectedGreetingText = `приветствуем, ${user.firstName} ${user.lastName}`;
 
-    expect(signedInRootResponse.body).toEqual(expect.stringContaining(expectedHtml));
+    expect(signedInRootResponse.body).toEqual(expect.stringContaining(expectedGreetingText));
 
     const signOutResponse = await app.inject({
       method: 'DELETE',
