@@ -113,6 +113,12 @@ describe('delete task status', () => {
       cookies: cookie,
     });
 
-    expect(response.statusCode).toBe(422);
+    const statuses = await models.status.query();
+    const actualStatusNames = statuses.map(({ name }) => name);
+    const expectedStatusNames = testData.statuses.map(({ name }) => name);
+
+    expect(response.statusCode).toBe(302);
+    expect(response.headers.location).toBe(app.reverse('statuses'));
+    expect(actualStatusNames).toEqual(expectedStatusNames);
   });
 });

@@ -56,22 +56,19 @@ export default async (app) => {
       },
     )
     .delete('/statuses/:id', { preValidation: app.authenticate }, async (request, reply) => {
-      const status = await models.status.query().findById(request.params.id)
-        .withGraphJoined('[tasks]').debug();
-      request.log.info({ status }, 'status selected for deletion');
+      const status = await models.status.query().findById(request.params.id);
+      const tasks = await status.$relatedQuery('tasks');
 
-      if (isEmpty(status.tasks)) {
-        await status.$query().delete();
-        request.flash('info', request.t('flash.statuses.delete.success', { name: status.name }));
+      if (!isEmpty(tasks)) {
+        request.flash('error', request.t('flash.statuses.delete.error'));
         reply.redirect(app.reverse('statuses'));
 
         return reply;
       }
 
-      const statuses = await models.status.query();
-
-      request.flash('error', request.t('flash.statuses.delete.error'));
-      reply.code(422).render('statuses/index', { statuses });
+      await status.$query().delete();
+      request.flash('info', request.t('flash.statuses.delete.success', { name: status.name }));
+      reply.redirect(app.reverse('statuses'));
 
       return reply;
     });

@@ -55,8 +55,8 @@ export default async (app) => {
     )
     .delete('/user', { preValidation: app.authenticate }, async (request, reply) => {
       const { user } = request;
-      const { createdTasks, executedTasks } = await user.$query()
-        .withGraphJoined('[createdTasks, executedTasks]');
+      const createdTasks = await user.$relatedQuery('createdTasks');
+      const executedTasks = await user.$relatedQuery('executedTasks');
 
       if (!isEmpty(createdTasks) || !isEmpty(executedTasks)) {
         request.flash('error', request.t('flash.users.delete.error'));
